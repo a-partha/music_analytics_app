@@ -1,0 +1,7 @@
+prefect:
+  cloud_url: "https://cloud.prefect.io"
+  workspace: "music-analytics"
+  storage_block: "s3/music-analytics-data"
+  retries: 2
+  retry_delay_seconds: 15
+  log_level: "INFO"

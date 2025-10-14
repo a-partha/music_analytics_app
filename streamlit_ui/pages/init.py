@@ -1,0 +1,4 @@
+#pages/init.py
+from music_analytics_app.streamlit_ui.pages.dashboard import show_dashboard
+from music_analytics_app.streamlit_ui.pages.dtc_analytics import show_dtc_analytics
+from music_analytics_app.streamlit_ui.pages.ip_analytics import show_ip_analytics

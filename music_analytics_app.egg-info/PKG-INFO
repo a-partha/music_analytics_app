@@ -1,0 +1,23 @@
+Metadata-Version: 2.4
+Name: music_analytics_app
+Version: 1.0.0
+Summary: Modular analytics app for music report PDF pipelines, DTC/IP analytics, and dashboard visualization.
+Home-page: https://github.com/your-repo-url
+Author: Aniruddha Partha
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.12
+Requires-Dist: streamlit==1.35.0
+Requires-Dist: prefect==2.13.7
+Requires-Dist: pdfplumber==0.9.0
+Requires-Dist: fpdf==1.7.2
+Requires-Dist: pandas==2.2.2
+Requires-Dist: matplotlib==3.8.0
+Requires-Dist: seaborn==0.13.2
+Requires-Dist: python-dotenv==1.0.1
+Dynamic: author
+Dynamic: classifier
+Dynamic: home-page
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
