@@ -12,8 +12,12 @@ class AnalysisState(TypedDict, total=False):
     gemini_model_name: str | None
     synthesis_model_name: str | None
     run_profile: str
+    analysis_mode: str | None
+    react_trace_callback: Any
     neutral_rows: Annotated[list[dict[str, Any]], operator.add]
     errors: Annotated[list[str], operator.add]
+    react_messages: Annotated[list[dict[str, Any]], operator.add]
+    judged_rows: Annotated[list[dict[str, Any]], operator.add]
     labeled_rows: list[dict[str, Any]]
     dtc_synthesis: str
     ip_synthesis: str

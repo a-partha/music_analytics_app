@@ -23,6 +23,7 @@ from src.services.file_search_store import (
     ensure_sections_in_store_from_bytes,
 )
 from src.services.section_splitter import SectionDetectionError
+from src.agents.analysis.trace_formatter import format_trace_rows_plain_english
 
 import streamlit as st
 
@@ -67,6 +68,23 @@ st.caption(
     f"({'3 subsections max' if dev_mode else 'all manifest subsections'})"
 )
 
+_analysis_mode_label: str | None = None
+_analysis_mode_value: str | None = None
+if dev_mode:
+    _analysis_mode_label = st.radio(
+        "Dev analysis mode",
+        options=("DTC only", "IP only", "Both"),
+        index=None,
+        key="analysis_mode_choice",
+        help="Required in Dev mode. Select which ReAct agent to run.",
+    )
+    if _analysis_mode_label == "DTC only":
+        _analysis_mode_value = "dtc_only"
+    elif _analysis_mode_label == "IP only":
+        _analysis_mode_value = "ip_only"
+    elif _analysis_mode_label == "Both":
+        _analysis_mode_value = "both"
+
 uploaded_file = st.file_uploader(
     "Upload Luminate report (PDF)", type=["pdf"], accept_multiple_files=False
 )
@@ -85,6 +103,9 @@ st.session_state.setdefault("neutral_labeled_rows", None)
 st.session_state.setdefault("strategy_results", None)
 st.session_state.setdefault("last_summarize_timings", None)
 st.session_state.setdefault("last_strategy_timings", None)
+st.session_state.setdefault("analysis_react_messages", None)
+st.session_state.setdefault("analysis_mode_used", None)
+st.session_state.setdefault("analysis_warnings", None)
 
 if uploaded_file and st.session_state.get("pdf_name") != uploaded_file.name:
     for key in (
@@ -102,6 +123,9 @@ if uploaded_file and st.session_state.get("pdf_name") != uploaded_file.name:
         "strategy_results",
         "last_summarize_timings",
         "last_strategy_timings",
+        "analysis_react_messages",
+        "analysis_mode_used",
+        "analysis_warnings",
     ):
         st.session_state[key] = None
 
@@ -182,10 +206,30 @@ def _render_run_timings_expander() -> None:
             )
 
 
+def _render_react_trace(
+    *,
+    target,
+    trace_rows: list[dict[str, object]],
+    title: str,
+    key_prefix: str,
+) -> None:
+    with target.container():
+        st.caption(title)
+        st.text_area(
+            "trace",
+            value=format_trace_rows_plain_english(trace_rows),
+            height=360,
+            disabled=True,
+            label_visibility="collapsed",
+            key=f"{key_prefix}_trace_{len(trace_rows)}",
+        )
+
+
 summarize_classify_clicked = st.button(
     "Summarize & classify report",
     type="primary",
-    disabled=uploaded_file is None,
+    disabled=uploaded_file is None
+    or (dev_mode and not _analysis_mode_value),
     use_container_width=True,
     key="btn_summarize_classify",
 )
@@ -213,6 +257,8 @@ else:
     st.info("Upload a PDF to enable analysis.")
 
 if summarize_classify_clicked and uploaded_file and _check_api_key():
+    live_trace_slot = st.empty() if dev_mode else None
+    react_trace: list[dict[str, object]] = []
     try:
         update_progress = _make_progress()
         with st.spinner("Summarize & classify…"):
@@ -232,6 +278,30 @@ if summarize_classify_clicked and uploaded_file and _check_api_key():
                 f"Neutral retrieval + summaries ({nsec} sections{dev_suffix}) — Gemini",
             )
             inner_timings: dict[str, float] = {}
+            react_trace.clear()
+            analysis_errors: list[str] = []
+
+            if live_trace_slot is not None:
+                _render_react_trace(
+                    target=live_trace_slot,
+                    trace_rows=react_trace,
+                    title="Agent thinking (live)",
+                    key_prefix="live",
+                )
+
+            def _on_react_trace_update(
+                trace_rows: list[dict[str, object]],
+            ) -> None:
+                react_trace.clear()
+                react_trace.extend(trace_rows)
+                if live_trace_slot is not None:
+                    _render_react_trace(
+                        target=live_trace_slot,
+                        trace_rows=react_trace,
+                        title="Agent thinking (live)",
+                        key_prefix="live",
+                    )
+
             t_dyn0 = time.perf_counter()
             dtc_r, ip_r, sec_r, labeled = run_analysis(
                 file_search_store_name=store_name,
@@ -240,7 +310,11 @@ if summarize_classify_clicked and uploaded_file and _check_api_key():
                 gemini_model_name=None,
                 synthesis_model_name=None,
                 pdf_hash=pdf_hash,
+                analysis_mode=_analysis_mode_value,
                 timings_out=inner_timings,
+                react_messages_out=react_trace,
+                react_trace_callback=_on_react_trace_update if dev_mode else None,
+                errors_out=analysis_errors,
                 run_profile=_analysis_profile,
             )
             dyn_wall_s = time.perf_counter() - t_dyn0
@@ -260,18 +334,48 @@ if summarize_classify_clicked and uploaded_file and _check_api_key():
         st.session_state["ip_section_used"] = None
         st.session_state["section_used"] = None
         st.session_state["strategy_results"] = None
+        st.session_state["analysis_react_messages"] = react_trace
+        st.session_state["analysis_mode_used"] = _analysis_mode_value
+        st.session_state["analysis_warnings"] = analysis_errors or None
         update_progress(100, "Done")
+        if live_trace_slot is not None:
+            live_trace_slot.empty()
     except RetrievalError as exc:
         st.session_state["last_summarize_timings"] = None
+        if dev_mode and react_trace:
+            st.session_state["analysis_react_messages"] = list(react_trace)
+            st.session_state["analysis_mode_used"] = _analysis_mode_value
+        for key in (
+            "dtc_results",
+            "ip_results",
+            "ip_section_used",
+            "section_results",
+            "section_used",
+            "neutral_labeled_rows",
+            "strategy_results",
+            "last_strategy_timings",
+            "analysis_warnings",
+        ):
+            st.session_state[key] = None
+        if live_trace_slot is not None:
+            live_trace_slot.empty()
         st.error(f"Pipeline failed: {exc}")
     except SectionDetectionError as exc:
         st.session_state["last_summarize_timings"] = None
+        if live_trace_slot is not None:
+            live_trace_slot.empty()
         st.error(f"Section split failed: {exc}")
     except Exception as exc:
         st.session_state["last_summarize_timings"] = None
+        if live_trace_slot is not None:
+            live_trace_slot.empty()
         st.error(f"Run failed: {exc}")
 
 _labeled = st.session_state.get("neutral_labeled_rows")
+_analysis_warnings = st.session_state.get("analysis_warnings") or []
+if _analysis_warnings:
+    for _warning in _analysis_warnings:
+        st.warning(_warning)
 if _labeled:
     with st.expander("Section labels (Gemini)"):
         for row in _labeled:
@@ -280,7 +384,8 @@ if _labeled:
             )
 
 dtc_results = st.session_state.get("dtc_results") or {}
-if dtc_results:
+_mode_used = st.session_state.get("analysis_mode_used")
+if dtc_results and (not dev_mode or _mode_used != "ip_only"):
     st.subheader("DTC (Fan / Engagement)")
     insights = dtc_results.get("insights", "")
     evidence_by_section = dtc_results.get("evidence_by_section", {}) or {}
@@ -304,7 +409,7 @@ if dtc_results:
             )
 
 ip_results = st.session_state.get("ip_results") or {}
-if ip_results:
+if ip_results and (not dev_mode or _mode_used != "dtc_only"):
     st.subheader("IP (Catalog / Export)")
     evidence_by_section = ip_results.get("evidence_by_section", {}) or {}
     src_labels = sorted(evidence_by_section.keys())
@@ -331,7 +436,7 @@ if ip_results:
             )
 
 section_results = st.session_state.get("section_results") or {}
-if section_results:
+if section_results and not dev_mode:
     st.subheader("Other sections")
     names = sorted(section_results.keys())
     st.caption("Sections labeled OTHER: " + ", ".join(names))
@@ -349,6 +454,17 @@ if section_results:
                 st.write(evidence)
             else:
                 st.write("No evidence available.")
+
+_react_trace = st.session_state.get("analysis_react_messages") or []
+if dev_mode and _react_trace:
+    _trace_expanded = not bool(st.session_state.get("neutral_labeled_rows"))
+    with st.expander("Agent thinking (dev)", expanded=_trace_expanded):
+        _render_react_trace(
+            target=st,
+            trace_rows=_react_trace,
+            title="Final trace",
+            key_prefix="final",
+        )
 
 st.divider()
 st.subheader("Recommendations (Strategy)")

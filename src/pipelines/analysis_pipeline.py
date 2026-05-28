@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -282,7 +283,11 @@ def run_dynamic_summarize_and_classify(
     synthesis_model_name: str | None = None,
     pdf_hash: str | None = None,
     *,
+    analysis_mode: str | None = None,
     timings_out: dict[str, float] | None = None,
+    react_messages_out: list[dict[str, Any]] | None = None,
+    react_trace_callback: Callable[[list[dict[str, Any]]], None] | None = None,
+    errors_out: list[str] | None = None,
     run_profile: str | None = None,
     dev_mode_flag: bool = False,
 ) -> tuple[
@@ -307,8 +312,12 @@ def run_dynamic_summarize_and_classify(
         gemini_model_name=gemini_model_name,
         synthesis_model_name=synthesis_model_name,
         run_profile=run_profile,
+        analysis_mode=analysis_mode,
         dev_mode_flag=dev_mode_flag,
         timings_out=timings_out,
+        react_messages_out=react_messages_out,
+        react_trace_callback=react_trace_callback,
+        errors_out=errors_out,
     )
 
 
@@ -320,7 +329,11 @@ def run_analysis(
     synthesis_model_name: str | None = None,
     pdf_hash: str | None = None,
     *,
+    analysis_mode: str | None = None,
     timings_out: dict[str, float] | None = None,
+    react_messages_out: list[dict[str, Any]] | None = None,
+    react_trace_callback: Callable[[list[dict[str, Any]]], None] | None = None,
+    errors_out: list[str] | None = None,
     run_profile: str | None = None,
     dev_mode_flag: bool = False,
 ) -> tuple[
@@ -337,7 +350,11 @@ def run_analysis(
         gemini_model_name=gemini_model_name,
         synthesis_model_name=synthesis_model_name,
         pdf_hash=pdf_hash,
+        analysis_mode=analysis_mode,
         timings_out=timings_out,
+        react_messages_out=react_messages_out,
+        react_trace_callback=react_trace_callback,
+        errors_out=errors_out,
         run_profile=run_profile,
         dev_mode_flag=dev_mode_flag,
     )

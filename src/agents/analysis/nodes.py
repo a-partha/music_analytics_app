@@ -5,6 +5,7 @@ from typing import Any
 
 from src.chains.section_label_chain import label_neutral_rows_with_synthesis
 from src.chains.section_summary_chain import summarize_section_from_context
+from src.config.analysis_mode import AnalysisMode, resolve_analysis_mode
 from src.config.run_profiles import RunProfile, profile_from_state_value
 from src.graphs.state import AnalysisState, SubsectionWorkState
 from src.services.file_search_retrieval import RetrievalError
@@ -18,6 +19,7 @@ from src.services.neutral_summary_cache import (
     resolved_gemini_model,
     resolved_synthesis_model,
 )
+from src.services.section_categories import CATEGORY_DTC, CATEGORY_IP, CATEGORY_OTHER
 from src.services.strategy_bundle import pipeline_results_from_labeled_neutral_rows
 from src.tools.file_search_tools import (
     retrieve_subsection_evidence_tool,
@@ -175,6 +177,151 @@ def assemble_outputs_node(state: AnalysisState) -> dict[str, Any]:
         "section_results": sec_r,
         "timings": timings,
     }
+
+
+def assemble_outputs_react_node(state: AnalysisState) -> dict[str, Any]:
+    t0 = time.perf_counter()
+    manifest = list(state.get("manifest") or [])
+    judged_rows = list(state.get("judged_rows") or [])
+    judged_by_key: dict[str, dict[str, Any]] = {}
+    for row in judged_rows:
+        key = str(row.get("subsection_key") or "").strip()
+        if not key:
+            continue
+        judged_by_key[key] = dict(row)
+
+    warnings: list[str] = []
+    for row in manifest:
+        key = str(row.get("subsection_key") or "").strip()
+        title = str(row.get("display_title") or "").strip()
+        if not key or key in judged_by_key:
+            continue
+        judged_by_key[key] = {
+            "subsection_key": key,
+            "display_title": title,
+            "summary": "_No classification produced._",
+            "evidence": "",
+            "category": CATEGORY_OTHER,
+        }
+        warnings.append(
+            "ReAct agent did not judge subsection_key "
+            f"{key!r}; backfilled as OTHER."
+        )
+
+    ordered_rows: list[dict[str, Any]] = []
+    for row in manifest:
+        key = str(row.get("subsection_key") or "").strip()
+        if not key:
+            continue
+        if key in judged_by_key:
+            ordered_rows.append(judged_by_key[key])
+
+    mode = resolve_analysis_mode(state.get("analysis_mode"))
+
+    def _mode_satisfied(rows: list[dict[str, Any]]) -> bool:
+        accepted = {
+            str(row.get("category") or "").upper()
+            for row in rows
+            if bool(row.get("accepted_for_target"))
+        }
+        if mode == AnalysisMode.DTC_ONLY:
+            return CATEGORY_DTC in accepted
+        if mode == AnalysisMode.IP_ONLY:
+            return CATEGORY_IP in accepted
+        if mode == AnalysisMode.BOTH:
+            return CATEGORY_DTC in accepted and CATEGORY_IP in accepted
+        return False
+
+    def _missing_mode_targets(rows: list[dict[str, Any]]) -> list[str]:
+        accepted = {
+            str(row.get("category") or "").upper()
+            for row in rows
+            if bool(row.get("accepted_for_target"))
+        }
+        required: tuple[str, ...]
+        if mode == AnalysisMode.DTC_ONLY:
+            required = (CATEGORY_DTC,)
+        elif mode == AnalysisMode.IP_ONLY:
+            required = (CATEGORY_IP,)
+        elif mode == AnalysisMode.BOTH:
+            required = (CATEGORY_DTC, CATEGORY_IP)
+        else:
+            required = ()
+        return [label for label in required if label not in accepted]
+
+    def _cap_rows_for_mode(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        if mode is None:
+            return rows
+        selected: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        wanted: tuple[str, ...]
+        if mode == AnalysisMode.DTC_ONLY:
+            wanted = (CATEGORY_DTC,)
+        elif mode == AnalysisMode.IP_ONLY:
+            wanted = (CATEGORY_IP,)
+        else:
+            wanted = (CATEGORY_DTC, CATEGORY_IP)
+
+        for row in rows:
+            cat = str(row.get("category") or "").upper()
+            if cat not in wanted or cat in seen:
+                continue
+            selected.append(row)
+            seen.add(cat)
+            if len(seen) == len(wanted):
+                break
+        return selected
+
+    accepted_rows = [
+        row
+        for row in ordered_rows
+        if bool(row.get("accepted_for_target"))
+    ]
+    missing_targets = _missing_mode_targets(ordered_rows)
+    if mode is not None and missing_targets:
+        accepted_categories = {
+            str(row.get("category") or "").upper()
+            for row in ordered_rows
+            if bool(row.get("accepted_for_target"))
+        }
+        partial_both_ok = (
+            mode == AnalysisMode.BOTH and bool(accepted_categories)
+        )
+        if partial_both_ok:
+            warnings.append(
+                "Dev mode partial success: missing required target label(s): "
+                f"{', '.join(missing_targets)} for analysis_mode="
+                f"{mode.value}."
+            )
+        else:
+            raise RetrievalError(
+                "Dev mode failed: no suitable subsection satisfied required "
+                "target label(s): "
+                f"{', '.join(missing_targets)} for analysis_mode="
+                f"{mode.value}. No fallback output was produced."
+            )
+
+    filtered = _cap_rows_for_mode(accepted_rows)
+    dtc_r, ip_r, sec_r = pipeline_results_from_labeled_neutral_rows(filtered)
+
+    timings = dict(state.get("timings") or {})
+    timings["react_rows_before_drop"] = float(len(ordered_rows))
+    timings["react_rows_after_drop"] = float(len(accepted_rows))
+    timings["react_rows_after_mode_cap"] = float(len(filtered))
+    timings["bundle_shape_s"] = time.perf_counter() - t0
+    out: dict[str, Any] = {
+        "judged_rows": ordered_rows,
+        "labeled_rows": filtered,
+        "dtc_results": dtc_r,
+        "ip_results": ip_r,
+        "section_results": sec_r,
+        "timings": timings,
+    }
+    if _mode_satisfied(ordered_rows):
+        warnings = []
+    if warnings:
+        out["errors"] = warnings
+    return out
 
 
 def prepare_subsection_fan_out(state: AnalysisState) -> list[Any]:
