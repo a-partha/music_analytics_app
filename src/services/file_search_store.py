@@ -14,62 +14,17 @@ from src.services.section_cache import (
     hash_pdf_bytes,
     put_cache_entry,
 )
-from src.services.section_categories import (
-    CATEGORY_DTC,
-    CATEGORY_IP,
-    CATEGORY_OTHER,
-)
 from src.services.section_splitter import split_pdf_into_dynamic_slices
-from src.services.section_splitter_legacy import (
-    split_pdf_into_sections as split_pdf_into_sections_legacy,
-)
 
 DEFAULT_STORE_DISPLAY_NAME = "luminate_store"
 POLL_INTERVAL_SECONDS = 5
 DEFAULT_TIMEOUT_SECONDS = 300
-SECTION_SPLITTER_MODE_ENV = "SECTION_SPLITTER_MODE"
+SPLITTER_MODE = "dynamic"
 CACHE_VERSION_TAG = "sec_v4"
-
-# Must match analysis_pipeline.DTC_SECTION_NAMES / IP_SECTION_NAMES for legacy uploads.
-_LEGACY_DTC_SECTION_NAMES = ("Engagement Horizon",)
-_LEGACY_IP_SECTION_NAMES = ("Import / Export", "Streaming Atlas")
-
-
-def _splitter_mode() -> str:
-    raw = os.getenv(SECTION_SPLITTER_MODE_ENV, "dynamic").strip().lower()
-    return raw if raw in ("legacy", "dynamic") else "dynamic"
 
 
 def _cache_key(pdf_hash: str) -> str:
-    return f"{pdf_hash}:{_splitter_mode()}:{CACHE_VERSION_TAG}"
-
-
-def _slugify_section(name: str) -> str:
-    return (
-        name.lower()
-        .replace(" / ", "_")
-        .replace("/", "_")
-        .replace(" ", "_")
-    )
-
-
-def _legacy_manifest(section_names: list[str]) -> list[dict[str, str]]:
-    rows: list[dict[str, str]] = []
-    for name in section_names:
-        if name in _LEGACY_DTC_SECTION_NAMES:
-            cat = CATEGORY_DTC
-        elif name in _LEGACY_IP_SECTION_NAMES:
-            cat = CATEGORY_IP
-        else:
-            cat = CATEGORY_OTHER
-        rows.append(
-            {
-                "subsection_key": _slugify_section(name),
-                "display_title": name,
-                "category": cat,
-            }
-        )
-    return rows
+    return f"{pdf_hash}:{SPLITTER_MODE}:{CACHE_VERSION_TAG}"
 
 
 def _load_env() -> None:
@@ -230,20 +185,19 @@ def ensure_sections_in_store_from_bytes(
 
     Returns:
         store_name, section_doc_names (subsection slug key -> Gemini doc name),
-        reused flag, manifest rows, splitter_mode (legacy|dynamic).
+        reused flag, manifest rows, splitter_mode (always dynamic).
     """
     pdf_hash = hash_pdf_bytes(file_bytes)
     cache_key = _cache_key(pdf_hash)
-    mode = _splitter_mode()
     cached = get_cached_entry(cache_key)
-    if cached and cached.get("splitter_mode", mode) == mode:
+    if cached and cached.get("splitter_mode", SPLITTER_MODE) == SPLITTER_MODE:
         manifest = cached.get("manifest") or []
         return (
             cached["store_name"],
             dict(cached["section_doc_names"]),
             True,
             manifest,
-            mode,
+            SPLITTER_MODE,
         )
 
     client = _get_client()
@@ -252,121 +206,67 @@ def ensure_sections_in_store_from_bytes(
     section_doc_names: dict[str, str] = {}
     manifest: list[dict[str, str]] = []
 
-    if mode == "legacy":
-        section_pdfs = split_pdf_into_sections_legacy(
-            file_bytes, model_name=model_name
+    slices = split_pdf_into_dynamic_slices(
+        file_bytes, model_name=model_name
+    )
+    for sl in slices:
+        manifest.append(
+            {
+                "subsection_key": sl.subsection_key,
+                "display_title": sl.display_title,
+            }
         )
-        manifest = _legacy_manifest(list(section_pdfs.keys()))
-        for section_name, section_bytes in section_pdfs.items():
-            section_slug = _slugify_section(section_name)
-            section_display = f"{base_stem}__{section_slug}.pdf"
-
-            existing = _get_document_by_display_name(
-                client, store.name, section_display
-            )
-            if existing:
-                section_doc_names[section_slug] = existing.name
-                continue
-
-            with NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-                tmp.write(section_bytes)
-                tmp_path = tmp.name
-            try:
-                operation = client.file_search_stores.upload_to_file_search_store(
-                    file=tmp_path,
-                    file_search_store_name=store.name,
-                    config={
-                        "display_name": section_display,
-                        "custom_metadata": [
-                            {
-                                "key": "source_filename",
-                                "string_value": display_name,
-                            },
-                            {
-                                "key": "section",
-                                "string_value": section_name,
-                            },
-                        ],
-                    },
-                )
-                _wait_for_operation(client, operation, timeout_seconds)
-            finally:
-                try:
-                    os.remove(tmp_path)
-                except OSError:
-                    pass
-
-            uploaded = _get_document_by_display_name(
-                client, store.name, section_display
-            )
-            if not uploaded:
-                raise RuntimeError(
-                    "Section upload finished but document not found: "
-                    f"{section_display}"
-                )
-            section_doc_names[section_slug] = uploaded.name
-    else:
-        slices = split_pdf_into_dynamic_slices(
-            file_bytes, model_name=model_name
+        section_display = f"{base_stem}__{sl.subsection_key}.pdf"
+        existing = _get_document_by_display_name(
+            client, store.name, section_display
         )
-        for sl in slices:
-            manifest.append(
-                {
-                    "subsection_key": sl.subsection_key,
-                    "display_title": sl.display_title,
-                }
-            )
-            section_display = f"{base_stem}__{sl.subsection_key}.pdf"
-            existing = _get_document_by_display_name(
-                client, store.name, section_display
-            )
-            if existing:
-                section_doc_names[sl.subsection_key] = existing.name
-                continue
+        if existing:
+            section_doc_names[sl.subsection_key] = existing.name
+            continue
 
-            with NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-                tmp.write(sl.pdf_bytes)
-                tmp_path = tmp.name
+        with NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+            tmp.write(sl.pdf_bytes)
+            tmp_path = tmp.name
+        try:
+            operation = client.file_search_stores.upload_to_file_search_store(
+                file=tmp_path,
+                file_search_store_name=store.name,
+                config={
+                    "display_name": section_display,
+                    "custom_metadata": [
+                        {
+                            "key": "source_filename",
+                            "string_value": display_name,
+                        },
+                        {
+                            "key": "subsection_key",
+                            "string_value": sl.subsection_key,
+                        },
+                        {
+                            "key": "subsection_display",
+                            "string_value": _truncate_metadata(
+                                sl.display_title
+                            ),
+                        },
+                    ],
+                },
+            )
+            _wait_for_operation(client, operation, timeout_seconds)
+        finally:
             try:
-                operation = client.file_search_stores.upload_to_file_search_store(
-                    file=tmp_path,
-                    file_search_store_name=store.name,
-                    config={
-                        "display_name": section_display,
-                        "custom_metadata": [
-                            {
-                                "key": "source_filename",
-                                "string_value": display_name,
-                            },
-                            {
-                                "key": "subsection_key",
-                                "string_value": sl.subsection_key,
-                            },
-                            {
-                                "key": "subsection_display",
-                                "string_value": _truncate_metadata(
-                                    sl.display_title
-                                ),
-                            },
-                        ],
-                    },
-                )
-                _wait_for_operation(client, operation, timeout_seconds)
-            finally:
-                try:
-                    os.remove(tmp_path)
-                except OSError:
-                    pass
+                os.remove(tmp_path)
+            except OSError:
+                pass
 
-            uploaded = _get_document_by_display_name(
-                client, store.name, section_display
+        uploaded = _get_document_by_display_name(
+            client, store.name, section_display
+        )
+        if not uploaded:
+            raise RuntimeError(
+                "Section upload finished but document not found: "
+                f"{section_display}"
             )
-            if not uploaded:
-                raise RuntimeError(
-                    "Section upload finished but document not found: "
-                    f"{section_display}"
-                )
-            section_doc_names[sl.subsection_key] = uploaded.name
+        section_doc_names[sl.subsection_key] = uploaded.name
 
     _wait_for_store_ready(client, store.name, timeout_seconds)
 
@@ -374,7 +274,7 @@ def ensure_sections_in_store_from_bytes(
         "store_name": store.name,
         "section_doc_names": section_doc_names,
         "manifest": manifest,
-        "splitter_mode": mode,
+        "splitter_mode": SPLITTER_MODE,
     }
     put_cache_entry(cache_key, cache_entry)
-    return store.name, section_doc_names, False, manifest, mode
+    return store.name, section_doc_names, False, manifest, SPLITTER_MODE

@@ -39,7 +39,7 @@ def run_strategy(
     model_name: str | None = None,
     timings_out: dict[str, float] | None = None,
 ) -> list[Recommendation]:
-    """Public facade: strategy LangGraph from analysis dicts or a pre-built bundle."""
+    """Strategy LangGraph from analysis dicts or a pre-built bundle."""
     if analysis_bundle is not None:
         return run_strategy_graph(
             analysis_bundle=analysis_bundle,

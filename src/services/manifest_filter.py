@@ -7,29 +7,7 @@ from src.services.section_categories import (
     CATEGORY_DTC,
     CATEGORY_IP,
     CATEGORY_OTHER,
-    assign_category,
 )
-
-
-def limit_manifest_one_per_category(
-    manifest: list[dict[str, str]],
-) -> list[dict[str, str]]:
-    """
-    Keep the first manifest row per DTC / IP / OTHER (by display_title heuristic).
-    Order within each category follows manifest order.
-    """
-    seen: set[str] = set()
-    out: list[dict[str, str]] = []
-    for row in manifest:
-        title = (row.get("display_title") or "").strip()
-        if not title:
-            continue
-        cat = assign_category(title)
-        if cat in seen:
-            continue
-        seen.add(cat)
-        out.append(row)
-    return out
 
 
 def _manifest_index(row: dict[str, Any]) -> int:
@@ -68,7 +46,7 @@ def apply_run_profile_to_manifest(
     """
     Keep manifest rows untouched for all profiles.
 
-    Dev mode reduction now happens *after* neutral summaries and LLM labeling.
+    Dev mode reduction happens after neutral summaries and LLM labeling.
     """
     _ = profile
     return list(manifest)

@@ -37,7 +37,7 @@ def filter_manifest_node(state: AnalysisState) -> dict[str, Any]:
     timings["run_profile"] = profile.value
     if not manifest:
         raise RetrievalError(
-            "No sections in manifest to summarize (empty or invalid manifest)."
+            "No sections available to summarize (empty or invalid list of sections)."
         )
     return {"manifest": manifest, "timings": timings}
 
@@ -52,7 +52,7 @@ def summarize_subsection_node(state: SubsectionWorkState) -> dict[str, Any]:
     except (TypeError, ValueError):
         row_index = -1
     if not key or not title:
-        return {"errors": [f"Skipped invalid manifest row: {row!r}"]}
+        return {"errors": [f"Skipped invalid section: {row!r}"]}
 
     store = state["file_search_store_name"]
     source = state["source_filename"]
@@ -142,7 +142,7 @@ def label_sections_node(state: AnalysisState) -> dict[str, Any]:
     rows = list(state.get("neutral_rows") or [])
     if not rows:
         raise RetrievalError(
-            "No sections in manifest to summarize (empty or invalid manifest)."
+            "No sections available to summarize (empty or invalid list of sections)."
         )
     try:
         labeled = label_neutral_rows_with_synthesis(

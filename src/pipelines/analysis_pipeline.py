@@ -2,17 +2,12 @@ from __future__ import annotations
 
 from collections.abc import Callable
 import os
-import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
-from src.chains.section_label_chain import label_neutral_rows_with_synthesis
 from src.chains.section_summary_chain import summarize_section_from_context
 from src.services.file_search_retrieval import (
     RetrievalError,
-    retrieve_dtc_evidence,
-    retrieve_ip_evidence,
-    retrieve_section_context,
     retrieve_subsection_evidence,
 )
 from src.services.neutral_summary_cache import (
@@ -20,35 +15,6 @@ from src.services.neutral_summary_cache import (
     put_neutral_row,
     resolved_gemini_model,
     resolved_synthesis_model,
-)
-from src.services.strategy_bundle import pipeline_results_from_labeled_neutral_rows
-
-PASS1_SECTION_NAMES = (
-    "Midyear Metrics",
-    "Streaming Atlas",
-    "Import / Export",
-    "Engagement Horizon",
-    "Artist Spectrum",
-    "Future in Focus",
-    "Midyear Charts",
-)
-
-DEFAULT_SECTION_NAMES = ("Midyear Metrics",)
-
-DTC_SECTION_NAMES = (
-    "Engagement Horizon",
-)
-
-IP_SECTION_NAMES = (
-    "Import / Export",
-    "Streaming Atlas",
-)
-
-OTHER_SECTION_NAMES = (
-    "Midyear Metrics",
-    "Artist Spectrum",
-    "Future in Focus",
-    "Midyear Charts",
 )
 
 
@@ -58,100 +24,6 @@ def _resolve_neutral_summary_workers() -> int:
         return max(1, int(raw))
     except ValueError:
         return 4
-
-
-def run_section_summary_pipeline(
-    file_search_store_name: str,
-    section_names: tuple[str, ...] = DEFAULT_SECTION_NAMES,
-    source_filename: str | None = None,
-    model_name: str | None = None,
-    *,
-    splitter_mode: str = "dynamic",
-    other_subsection_key: str | None = None,
-) -> dict[str, dict[str, str]]:
-    if splitter_mode == "legacy":
-        summaries: dict[str, dict[str, str]] = {}
-        for section_name in section_names:
-            context = retrieve_section_context(
-                file_search_store_name=file_search_store_name,
-                section_name=section_name,
-                source_filename=source_filename,
-                model_name=model_name,
-            )
-            summary = summarize_section_from_context(
-                section_name=section_name,
-                grounded_context=context,
-                model_name=model_name,
-            )
-            summaries[section_name] = {
-                "summary": summary,
-                "evidence": context,
-            }
-        return summaries
-
-    if other_subsection_key is None:
-        raise RetrievalError(
-            "Dynamic splitter mode requires other_subsection_key for "
-            "single-section summaries."
-        )
-    if len(section_names) != 1:
-        raise RetrievalError(
-            "Dynamic mode expects exactly one display title in section_names."
-        )
-    display_title = section_names[0]
-    context = retrieve_subsection_evidence(
-        file_search_store_name=file_search_store_name,
-        subsection_key=other_subsection_key,
-        display_title=display_title,
-        source_filename=source_filename,
-        model_name=model_name,
-    )
-    summary = summarize_section_from_context(
-        section_name=display_title,
-        grounded_context=context,
-        model_name=model_name,
-    )
-    return {
-        display_title: {
-            "summary": summary,
-            "evidence": context,
-        }
-    }
-
-
-def run_section_retrieval_pipeline(
-    file_search_store_name: str,
-    section_names: tuple[str, ...] = DEFAULT_SECTION_NAMES,
-    source_filename: str | None = None,
-    model_name: str | None = None,
-    *,
-    splitter_mode: str = "dynamic",
-    other_subsection_key: str | None = None,
-) -> dict[str, str]:
-    if splitter_mode == "legacy":
-        evidence_map: dict[str, str] = {}
-        for section_name in section_names:
-            evidence_map[section_name] = retrieve_section_context(
-                file_search_store_name=file_search_store_name,
-                section_name=section_name,
-                source_filename=source_filename,
-                model_name=model_name,
-            )
-        return evidence_map
-
-    if other_subsection_key is None or len(section_names) != 1:
-        raise RetrievalError(
-            "Dynamic mode requires one section name and other_subsection_key."
-        )
-    display_title = section_names[0]
-    text = retrieve_subsection_evidence(
-        file_search_store_name=file_search_store_name,
-        subsection_key=other_subsection_key,
-        display_title=display_title,
-        source_filename=source_filename,
-        model_name=model_name,
-    )
-    return {display_title: text}
 
 
 def _neutral_row_one(
@@ -342,7 +214,6 @@ def run_analysis(
     dict[str, dict[str, str]],
     list[dict[str, Any]],
 ]:
-    """Public facade for the analysis LangGraph."""
     return run_dynamic_summarize_and_classify(
         file_search_store_name=file_search_store_name,
         manifest=manifest,
@@ -358,99 +229,3 @@ def run_analysis(
         run_profile=run_profile,
         dev_mode_flag=dev_mode_flag,
     )
-
-
-def run_dtc_insights_pipeline(
-    file_search_store_name: str,
-    section_names: tuple[str, ...] = DTC_SECTION_NAMES,
-    source_filename: str | None = None,
-    model_name: str | None = None,
-    *,
-    splitter_mode: str = "dynamic",
-) -> dict[str, object]:
-    if splitter_mode != "legacy":
-        raise RetrievalError(
-            "In dynamic mode use summarize & classify for the full report "
-            "instead of the per-category DTC pipeline."
-        )
-    from src.chains.dtc_insights_chain import summarize_dtc_insights
-
-    evidence_by_section: dict[str, str] = {}
-    for section_name in section_names:
-        try:
-            evidence_by_section[section_name] = retrieve_dtc_evidence(
-                file_search_store_name=file_search_store_name,
-                section_name=section_name,
-                source_filename=source_filename,
-                model_name=model_name,
-            )
-        except RetrievalError:
-            evidence_by_section[section_name] = ""
-
-    if not any(evidence_by_section.values()):
-        raise RetrievalError(
-            "No DTC evidence found across any of: "
-            f"{', '.join(section_names)}."
-        )
-
-    combined_evidence = "\n\n".join(
-        f"=== {section} ===\n{evidence}"
-        for section, evidence in evidence_by_section.items()
-        if evidence
-    )
-    insights = summarize_dtc_insights(
-        grounded_context=combined_evidence,
-        model_name=model_name,
-    )
-    return {
-        "insights": insights,
-        "evidence_by_section": evidence_by_section,
-    }
-
-
-def run_ip_insights_pipeline(
-    file_search_store_name: str,
-    section_names: tuple[str, ...] = IP_SECTION_NAMES,
-    source_filename: str | None = None,
-    model_name: str | None = None,
-    *,
-    splitter_mode: str = "dynamic",
-) -> dict[str, object]:
-    if splitter_mode != "legacy":
-        raise RetrievalError(
-            "In dynamic mode use summarize & classify for the full report "
-            "instead of the per-category IP pipeline."
-        )
-    from src.chains.ip_insights_chain import summarize_ip_insights
-
-    evidence_by_section: dict[str, str] = {}
-    for section_name in section_names:
-        try:
-            evidence_by_section[section_name] = retrieve_ip_evidence(
-                file_search_store_name=file_search_store_name,
-                section_name=section_name,
-                source_filename=source_filename,
-                model_name=model_name,
-            )
-        except RetrievalError:
-            evidence_by_section[section_name] = ""
-
-    if not any(evidence_by_section.values()):
-        raise RetrievalError(
-            "No IP evidence found across any of: "
-            f"{', '.join(section_names)}."
-        )
-
-    combined_evidence = "\n\n".join(
-        f"=== {section} ===\n{evidence}"
-        for section, evidence in evidence_by_section.items()
-        if evidence
-    )
-    insights = summarize_ip_insights(
-        grounded_context=combined_evidence,
-        model_name=model_name,
-    )
-    return {
-        "insights": insights,
-        "evidence_by_section": evidence_by_section,
-    }

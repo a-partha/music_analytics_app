@@ -4,7 +4,7 @@ from collections.abc import Callable
 from typing import Any
 
 from langchain_core.messages import AIMessage, BaseMessage, ToolMessage
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 
 from src.agents.analysis.react_tools import (
     fetch_and_summarize_subsection,
@@ -81,10 +81,10 @@ def _build_agent(
     model_name: str | None,
 ):
     model = get_langchain_gemini_model(model_name=model_name, temperature=0.0)
-    return create_react_agent(
+    return create_agent(
         model=model,
         tools=_toolset_for_mode(mode),
-        prompt=_prompt_for_mode(mode),
+        system_prompt=_prompt_for_mode(mode),
         name=f"analysis_react_{mode.value}",
     )
 

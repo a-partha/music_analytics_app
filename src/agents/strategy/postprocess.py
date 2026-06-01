@@ -58,12 +58,6 @@ _STOPWORDS = frozenset(
         "both",
         "very",
         "when",
-        "suggest",
-        "suggests",
-        "trends",
-        "trend",
-        "local",
-        "high",
     }
 )
 
@@ -84,19 +78,8 @@ def _jaccard(a: set[str], b: set[str]) -> float:
     return inter / union if union else 0.0
 
 
-def _region_markers(text: str) -> set[str]:
-    low = text.lower()
-    markers: set[str] = set()
-    if re.search(r"\buae\b|united arab emirates", low):
-        markers.add("__region_uae__")
-    if "brazil" in low:
-        markers.add("__region_brazil__")
-    if re.search(r"\bindia\b", low):
-        markers.add("__region_india__")
-    return markers
-
-
 def _entity_like_strings(text: str) -> set[str]:
+    """Proper nouns and acronyms from original casing (report-agnostic)."""
     out: set[str] = set()
     for m in re.finditer(r"\b[A-Z]{2,}\b", text):
         out.add(m.group(0).lower())
@@ -109,6 +92,16 @@ def _entity_like_strings(text: str) -> set[str]:
     return out
 
 
+def _recommendation_text(rec: Recommendation) -> str:
+    parts = [
+        (rec.get("title") or "").strip(),
+        (rec.get("insight") or "").strip(),
+        (rec.get("evidence") or "").strip(),
+        (rec.get("action") or "").strip(),
+    ]
+    return " ".join(p for p in parts if p)
+
+
 def dedupe_recommendations(
     recs: list[Recommendation],
     *,
@@ -119,33 +112,19 @@ def dedupe_recommendations(
         return recs
     kept: list[Recommendation] = []
     for rec in recs:
-        t = (rec.get("title") or "").strip()
-        ins = (rec.get("insight") or "").strip()
-        combined = f"{t} {ins}"
+        combined = _recommendation_text(rec)
         tokens = _content_tokens(combined)
         entities = _entity_like_strings(combined)
-        regions = _region_markers(combined)
-        sig = entities | regions
         duplicate = False
         for prev in kept:
-            pt = (
-                f"{(prev.get('title') or '').strip()} "
-                f"{(prev.get('insight') or '').strip()}"
-            )
-            prev_tok = _content_tokens(pt)
-            prev_ent = _entity_like_strings(pt)
-            prev_regions = _region_markers(pt)
-            prev_sig = prev_ent | prev_regions
+            prev_combined = _recommendation_text(prev)
+            prev_tok = _content_tokens(prev_combined)
+            prev_ent = _entity_like_strings(prev_combined)
             jac = _jaccard(tokens, prev_tok)
-            ent_overlap = bool(sig & prev_sig)
-            region_overlap = bool(regions & prev_regions)
             if jac >= high_jaccard:
                 duplicate = True
                 break
-            if ent_overlap and jac >= entity_jaccard:
-                duplicate = True
-                break
-            if region_overlap and jac >= 0.16:
+            if entities & prev_ent and jac >= entity_jaccard:
                 duplicate = True
                 break
         if not duplicate:
@@ -186,7 +165,7 @@ def parse_strategy_markdown(raw: str) -> list[Recommendation]:
     if len(blocks) <= 1:
         # Fallback: if Gemini skips header formatting, split right before 'Title:'
         blocks = re.split(r"(?im)(?=^[\*\s]*Title[\*\s]*:)", text)
-        
+
     recs: list[Recommendation] = []
     for block in blocks:
         chunk = block.strip()

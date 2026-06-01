@@ -64,7 +64,7 @@ def _route_after_filter(state: AnalysisState) -> str:
     profile = profile_from_state_value(state.get("run_profile"))
     if profile == RunProfile.DEV_ONE_PER_CATEGORY:
         return "react_mode_router"
-    return "legacy_parallel_router"
+    return "parallel_router"
 
 
 def _route_react_mode(state: AnalysisState) -> str:
@@ -80,7 +80,7 @@ def _route_react_mode(state: AnalysisState) -> str:
     )
 
 
-def _legacy_parallel_router_node(_: AnalysisState) -> dict[str, Any]:
+def _parallel_router_node(_: AnalysisState) -> dict[str, Any]:
     return {}
 
 
@@ -176,7 +176,7 @@ def _build_analysis_graph() -> CompiledStateGraph:
     builder = StateGraph(AnalysisState)
 
     builder.add_node("filter_manifest", filter_manifest_node)
-    builder.add_node("legacy_parallel_router", _legacy_parallel_router_node)
+    builder.add_node("parallel_router", _parallel_router_node)
     builder.add_node("react_mode_router", _react_mode_router_node)
     builder.add_node("summarize_subsection", summarize_subsection_node)
     builder.add_node("label_sections", label_sections_node)
@@ -191,12 +191,12 @@ def _build_analysis_graph() -> CompiledStateGraph:
         "filter_manifest",
         _route_after_filter,
         {
-            "legacy_parallel_router": "legacy_parallel_router",
+            "parallel_router": "parallel_router",
             "react_mode_router": "react_mode_router",
         },
     )
     builder.add_conditional_edges(
-        "legacy_parallel_router",
+        "parallel_router",
         prepare_subsection_fan_out,
         ["summarize_subsection"],
     )
