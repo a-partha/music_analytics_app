@@ -13,3 +13,6 @@ secondaryBackgroundColor = "#242018"
 textColor = "#f5efe6"
 borderColor = "#4a433c"
 font = "sans serif"
+
+[server]
+maxUploadSize = 100
