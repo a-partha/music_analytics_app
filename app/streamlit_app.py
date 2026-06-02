@@ -28,6 +28,9 @@ from src.agents.analysis.trace_formatter import format_trace_rows_plain_english
 
 import streamlit as st
 
+MAX_UPLOAD_MB = 100
+MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024
+
 
 def load_env() -> None:
     try:
@@ -136,10 +139,13 @@ def _inject_styles() -> None:
             border-bottom: 1px solid var(--ui-line);
         }
 
-        .block-container {
-            padding-top: 1.25rem;
+        [data-testid="stMainBlockContainer"],
+        .main .block-container {
+            padding-top: max(2.75rem, calc(env(safe-area-inset-top, 0px) + 1.5rem));
             padding-bottom: 3rem;
-            max-width: 1120px;
+            padding-left: clamp(1rem, 3vw, 2rem);
+            padding-right: clamp(1rem, 3vw, 2rem);
+            max-width: min(1120px, 100%);
         }
 
         [data-testid="stVerticalBlock"] > div {
@@ -157,6 +163,10 @@ def _inject_styles() -> None:
         div[data-testid="stMarkdownContainer"]:has(.ui-steps),
         div[data-testid="stMarkdownContainer"]:has(.ui-divider) {
             margin-bottom: 0 !important;
+        }
+
+        div[data-testid="stMarkdownContainer"]:has(.ui-hero) {
+            padding-top: 0.15rem;
         }
 
         h1, h2, h3, h4, h5, h6,
@@ -185,7 +195,7 @@ def _inject_styles() -> None:
         }
 
         .ui-hero {
-            padding: 0 0 1rem;
+            padding: 0.35rem 0 1rem;
             margin-bottom: 0.5rem;
         }
         .ui-accent-bar {
@@ -201,11 +211,12 @@ def _inject_styles() -> None:
             );
         }
         .ui-hero-eyebrow {
-            font-size: 0.875rem;
-            line-height: 1.3;
+            font-size: clamp(0.8125rem, 2vw, 0.875rem);
+            line-height: 1.45;
             color: var(--ui-accent);
             font-weight: 500;
-            margin-bottom: 0.25rem;
+            margin: 0 0 0.35rem 0;
+            padding-top: 0.1rem;
         }
         .ui-hero h1 {
             font-size: clamp(2rem, 3.6vw, 2.75rem) !important;
@@ -217,19 +228,20 @@ def _inject_styles() -> None:
         }
         .ui-hero-desc {
             margin: 0 0 0.45rem 0;
-            max-width: 42rem;
-            font-size: 1rem;
+            max-width: min(42rem, 100%);
+            font-size: clamp(0.9375rem, 2.2vw, 1rem);
             line-height: 1.55;
             color: var(--ui-secondary);
             font-weight: 400;
         }
         .ui-hero-stack {
             margin: 0;
-            max-width: 42rem;
-            font-size: 0.8125rem;
-            line-height: 1.35;
+            max-width: min(42rem, 100%);
+            font-size: clamp(0.75rem, 1.8vw, 0.8125rem);
+            line-height: 1.45;
             color: var(--ui-tertiary);
             letter-spacing: 0.01em;
+            overflow-wrap: anywhere;
         }
 
         .ui-label {
@@ -524,6 +536,50 @@ def _inject_styles() -> None:
         [data-testid="stMarkdownContainer"] a {
             color: var(--ui-accent) !important;
         }
+
+        @media (max-width: 960px) {
+            [data-testid="stMainBlockContainer"],
+            .main .block-container {
+                padding-top: max(2.25rem, calc(env(safe-area-inset-top, 0px) + 1.25rem));
+            }
+
+            div[data-testid="stHorizontalBlock"] {
+                flex-direction: column !important;
+                gap: 0.75rem !important;
+            }
+
+            div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+                width: 100% !important;
+                flex: 1 1 100% !important;
+                min-width: 0 !important;
+            }
+
+            .ui-step {
+                min-width: calc(50% - 0.35rem);
+            }
+        }
+
+        @media (max-width: 640px) {
+            [data-testid="stMainBlockContainer"],
+            .main .block-container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .ui-step {
+                min-width: 100%;
+            }
+
+            div[data-testid="stRadio"] > div[role="radiogroup"] {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 0.35rem !important;
+            }
+
+            div[data-testid="stVerticalBlockBorderWrapper"] {
+                padding: 0.75rem 0.8rem 0.85rem;
+            }
+        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -720,13 +776,21 @@ with _setup_col:
             "Document (PDF)",
             type=["pdf"],
             accept_multiple_files=False,
-            help="Upload a music industry report.",
+            help=f"Upload a music industry report (PDF, max {MAX_UPLOAD_MB} MB).",
+        )
+
+        _file_too_large = (
+            uploaded_file is not None and uploaded_file.size > MAX_UPLOAD_BYTES
         )
 
         summarize_classify_clicked = st.button(
             "Run analysis",
             type="primary",
-            disabled=uploaded_file is None or not _analysis_mode_value,
+            disabled=(
+                uploaded_file is None
+                or not _analysis_mode_value
+                or _file_too_large
+            ),
             use_container_width=True,
             key="btn_summarize_classify",
         )
@@ -789,24 +853,31 @@ with _output_col:
             _render_timer_message(st.session_state["live_timer_message"])
 
         if uploaded_file:
-            size_kb = uploaded_file.size / 1024
-            st.success(f"**{uploaded_file.name}** ready, {size_kb:.0f} KB")
-            with st.expander("Document processing details", expanded=False):
-                reused = st.session_state.get("file_search_sections_reused")
-                store_name = st.session_state.get("file_search_store_name")
-                section_doc_names = st.session_state.get(
-                    "file_search_section_doc_names"
+            if _file_too_large:
+                size_mb = uploaded_file.size / (1024 * 1024)
+                st.error(
+                    f"**{uploaded_file.name}** is {size_mb:.1f} MB — "
+                    f"max allowed is {MAX_UPLOAD_MB} MB."
                 )
-                if reused is not None:
-                    st.caption(
-                        "Reused cached sections."
-                        if reused
-                        else "Indexed new sections from PDF."
+            else:
+                size_kb = uploaded_file.size / 1024
+                st.success(f"**{uploaded_file.name}** ready, {size_kb:.0f} KB")
+                with st.expander("Document processing details", expanded=False):
+                    reused = st.session_state.get("file_search_sections_reused")
+                    store_name = st.session_state.get("file_search_store_name")
+                    section_doc_names = st.session_state.get(
+                        "file_search_section_doc_names"
                     )
-                if store_name and section_doc_names:
-                    st.caption(
-                        f"Indexed sections: **{len(section_doc_names)}**"
-                    )
+                    if reused is not None:
+                        st.caption(
+                            "Reused cached sections."
+                            if reused
+                            else "Indexed new sections from PDF."
+                        )
+                    if store_name and section_doc_names:
+                        st.caption(
+                            f"Indexed sections: **{len(section_doc_names)}**"
+                        )
         else:
             _render_empty_state(
                 title="No report uploaded",
@@ -914,7 +985,12 @@ def _render_react_trace(
         )
 
 
-if summarize_classify_clicked and uploaded_file and _check_api_key():
+if (
+    summarize_classify_clicked
+    and uploaded_file
+    and not _file_too_large
+    and _check_api_key()
+):
     st.session_state["live_timer_message"] = None
     live_trace_slot = st.empty()
     react_trace: list[dict[str, object]] = []
