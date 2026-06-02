@@ -104,19 +104,22 @@ _UI_VARS_DARK = """
 """
 
 
+def _resolved_theme() -> str:
+    theme = getattr(st.context, "theme", None)
+    theme_type = theme.get("type") if theme is not None else None
+    if isinstance(theme_type, str) and theme_type.lower() in {"light", "dark"}:
+        return theme_type.lower()
+    return "light"
+
+
 def _root_vars_css() -> str:
-    theme = getattr(st.context, "theme", None) or {}
-    theme_type = theme.get("type")
-    if theme_type == "dark":
-        return f":root {{{_UI_VARS_DARK}\n        }}"
-    if theme_type == "light":
-        return f":root {{{_UI_VARS_LIGHT}\n        }}"
+    theme = _resolved_theme()
+    vars_block = _UI_VARS_LIGHT if theme == "light" else _UI_VARS_DARK
     return f"""
-        :root {{{_UI_VARS_LIGHT}
+        :root {{{vars_block}
         }}
-        @media (prefers-color-scheme: dark) {{
-            :root {{{_UI_VARS_DARK}
-            }}
+        .stApp {{
+            color-scheme: {theme};
         }}
     """
 
@@ -131,7 +134,6 @@ def _inject_styles() -> None:
         + """
         .stApp {
             background: var(--ui-bg);
-            color-scheme: light dark;
         }
 
         header[data-testid="stHeader"] {
@@ -385,6 +387,9 @@ def _inject_styles() -> None:
             background: var(--ui-muted);
             border: 1px solid var(--ui-line);
             border-radius: var(--ui-radius);
+            height: auto;
+            min-height: 0;
+            flex: 0 0 auto;
         }
         .ui-empty-title {
             font-size: 0.9375rem;
@@ -404,13 +409,29 @@ def _inject_styles() -> None:
             border: none;
         }
 
+        div[data-testid="stMarkdownContainer"]:has(.ui-empty) {
+            flex: 0 0 auto !important;
+            height: auto !important;
+            margin-bottom: 0 !important;
+        }
+
+        div[data-testid="stVerticalBlock"] > div:has(.ui-empty) {
+            flex: 0 0 auto !important;
+            flex-grow: 0 !important;
+            height: auto !important;
+        }
+
         div[data-testid="stVerticalBlockBorderWrapper"] {
             background: var(--ui-surface);
             border-radius: var(--ui-radius) !important;
             border-color: var(--ui-line) !important;
             box-shadow: var(--ui-elevation-1) !important;
-            padding: 0.85rem 0.95rem 0.95rem;
+            padding: 1rem;
             margin-bottom: 0.35rem;
+            height: auto !important;
+            align-self: flex-start;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         div[data-testid="stFileUploader"] section {
@@ -577,7 +598,7 @@ def _inject_styles() -> None:
             }
 
             div[data-testid="stVerticalBlockBorderWrapper"] {
-                padding: 0.75rem 0.8rem 0.85rem;
+                padding: 0.9rem;
             }
         }
         </style>
@@ -736,6 +757,12 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
+_current_theme = _resolved_theme()
+_previous_theme = st.session_state.get("_ui_theme_type")
+if _previous_theme is not None and _previous_theme != _current_theme:
+    st.session_state["_ui_theme_type"] = _current_theme
+    st.rerun()
+st.session_state["_ui_theme_type"] = _current_theme
 _inject_styles()
 _render_hero()
 
