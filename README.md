@@ -10,24 +10,29 @@ An **agentic AI pipeline** that turns music industry PDFs into grounded insights
 
 ```mermaid
 flowchart TB
-    A([Upload PDF]) --> B[Vision split]
-    B --> C[File Search index]
-    C --> D[List pending]
-    D --> E[Fetch and summarize]
-    E --> F[Judge and validate]
-    F --> G{Targets met?}
+    A(["Step A: Upload PDF"]) --> B["Step B: Vision split"]
+    B --> C["Step C: File Search index"]
+    C --> D["Step D: List pending"]
+    D --> E["Step E: Fetch and summarize"]
+    E --> F["Step F: Judge and validate"]
+    F --> G{"Step G: Targets met?"}
     G -->|No| D
-    G -->|Yes| H[Build bundle]
-    H --> I[Generate brief]
-    I --> J[Parse and dedupe]
-    J --> K{Grounded OK?}
+    G -->|Yes| H["Step H: Build bundle"]
+    H --> I["Step I: Generate brief"]
+    I --> J["Step J: Parse and dedupe"]
+    J --> K{"Step K: Grounded OK?"}
     K -->|No| I
-    K -->|Yes| L[Streamlit UI]
+    K -->|Yes| L["Step L: Streamlit UI"]
 ```
 
-
-
-**Phases:** ingest (A–C) → analysis loop (D–G) → strategy (H–K) → UI (L).
+| Step | Phase | What happens |
+| --- | --- | --- |
+| A | Ingest | User uploads PDF |
+| B | Ingest | Vision LLM splits into subsections |
+| C | Ingest | File Search indexes each subsection |
+| D-G | Analysis | ReAct loop: list, fetch, judge until targets met |
+| H-K | Strategy | Bundle insights, generate brief, parse, grounded check |
+| L | UI | Insight cards, ReAct trace, recommendations |
 
 The **ReAct trace** streams during the run and persists in the "How the AI reached these insights" expander.
 
