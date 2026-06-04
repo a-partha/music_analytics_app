@@ -41,6 +41,10 @@ flowchart TB
 
 The **ReAct trace** streams during the run and persists in the "How the AI reached these insights" expander.
 
+## Vision splitting
+
+PyMuPDF renders the PDF to page images; Gemini vision returns section titles and start pages; the pipeline cuts mini-PDFs and indexes them in File Search (`[section_splitter.py](src/services/section_splitter.py)`). LLM model: `gemini-2.5-flash`. Details: `[docs/Documentation.md](docs/Documentation.md)`.
+
 ## How it works
 
 The analysis stage is a **ReAct agent** (Reason + Act) built with LangChain's `create_agent`. The LLM runs a loop:
@@ -125,9 +129,9 @@ GEMINI_API_KEY=your_key_here
 Optional model overrides:
 
 ```env
-GEMINI_ANALYSIS_MODEL=gemini-3.1-flash-lite
-GEMINI_STRATEGY_MODEL=gemini-3.1-pro
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_ANALYSIS_MODEL=gemini-3.1-flash-lite   # ReAct agent, summaries, labels
+GEMINI_STRATEGY_MODEL=gemini-3.1-pro          # executive brief
+GEMINI_MODEL=gemini-2.5-flash                 # optional: vision split + File Search retrieval
 ```
 
 ### Run locally
