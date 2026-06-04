@@ -10,40 +10,30 @@ An **agentic AI pipeline** that turns music industry PDFs into grounded insights
 
 ```mermaid
 flowchart TB
-    START([Upload PDF]) --> SPLIT[Vision LLM: split subsections]
-    SPLIT --> INDEX[File Search: index subsections]
-    INDEX --> LIST
-
-    subgraph ANALYSIS ["Analysis · LangGraph + ReAct agent"]
-        direction TB
-        LIST[List pending subsections] --> FETCH[Fetch and summarize]
-        FETCH --> JUDGE[Judge and validate]
-        JUDGE --> FINISH{Targets met?}
-        FINISH -->|No · scan next| LIST
-    end
-
-    FINISH -->|Yes| BUNDLE[Build insight bundle]
-
-    subgraph STRATEGY ["Strategy · LangGraph"]
-        direction TB
-        BUNDLE --> GEN[Generate executive brief]
-        GEN --> POST[Parse and dedupe]
-        POST --> CHECK{Grounded check passed?}
-        CHECK -->|No · retry once| GEN
-    end
-
-    CHECK -->|Yes| UI["Streamlit UI<br/>Insight cards · ReAct trace · Recommendations"]
+    A([Upload PDF]) --> B[Vision split]
+    B --> C[File Search index]
+    C --> D[List pending]
+    D --> E[Fetch and summarize]
+    E --> F[Judge and validate]
+    F --> G{Targets met?}
+    G -->|No| D
+    G -->|Yes| H[Build bundle]
+    H --> I[Generate brief]
+    I --> J[Parse and dedupe]
+    J --> K{Grounded OK?}
+    K -->|No| I
+    K -->|Yes| L[Streamlit UI]
 ```
 
 
 
-**Phases:** ingest → ReAct analysis loop → strategy loop → UI output.
+**Phases:** ingest (A–C) → analysis loop (D–G) → strategy (H–K) → UI (L).
 
 The **ReAct trace** streams during the run and persists in the "How the AI reached these insights" expander.
 
 ## Vision splitting
 
-PyMuPDF renders the PDF to page images; Gemini vision returns section titles and start pages; the pipeline cuts mini-PDFs and indexes them in File Search (`[section_splitter.py](src/services/section_splitter.py)`). LLM model: `gemini-2.5-flash`. Details: `[docs/Documentation.md](docs/Documentation.md)`.
+PyMuPDF renders the PDF to page images; Gemini vision returns section titles and start pages; the pipeline cuts mini-PDFs and indexes them in File Search ([`section_splitter.py`](src/services/section_splitter.py)). LLM model: `gemini-2.5-flash`. Details: [`docs/Documentation.md`](docs/Documentation.md).
 
 ## How it works
 
