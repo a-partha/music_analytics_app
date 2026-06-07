@@ -1,14 +1,10 @@
-# Music Analytics Pipeline — Agentic AI Implementation Plan
-
-**Status:** Pass 1 and Pass 2 are implemented. The demo is live on Streamlit Cloud. This document describes the **current** app (post–repo cleanup), not a future roadmap.
-
+# Music Analytics Pipeline: Agentic AI Implementation
 ---
-
 ## Project overview
 
-**Goal:** Demo agentic AI for music-industry employers — **LLM-powered**, grounded analysis and C-suite recommendations from a real industry PDF.
+**Goal:** Demo agentic AI for music-industry reporting: LLM-powered, grounded analysis and C-suite recommendations from a real industry PDF.
 
-**Input:** Music industry reports (PDF).
+**Input:** Music industry report (PDF).
 
 **Stack:** Streamlit · **Google Gemini LLMs** (vision, File Search RAG, LangChain chains, ReAct agent) · LangGraph  
 **Live demo:** [music-agentic-analytics.streamlit.app](https://music-agentic-analytics.streamlit.app/) (Streamlit Community Cloud)  
@@ -40,7 +36,6 @@ Every “intelligent” step in the pipeline is an LLM call. Two SDK paths are u
 | **Label validator** | `section_label_single_chains.py` | `gemini-3.1-flash-lite` | Second-pass ACCEPT/REJECT on judge output before accepting a row |
 | **Strategy brief** | `strategy_chain.py` | `gemini-3.1-pro` | Markdown executive recommendations from the analysis bundle |
 
-**Model tiering:** Flash / flash-lite for high-volume analysis steps (retrieval, summarization, labeling, agent). Pro for the lower-volume strategy pass where quality matters most.
 
 **Env overrides** (`src/services/langchain_llm.py`, retrieval, splitter):
 
@@ -83,7 +78,7 @@ Postprocess steps (`postprocess.py`, `strategy_bundle.py`) are deterministic (pa
 | Tests         | pytest (`src/validation/`)      | No network; mocks for graph and ReAct (49 tests)                                |
 
 
-**Dependencies** (`requirements.txt`): `streamlit`, `python-dotenv`, `google-genai`, `langchain`, `langchain-core`, `langchain-google-genai`, `langgraph`, `PyMuPDF`. No `rapidfuzz` (title heuristics removed).
+**Dependencies** (`requirements.txt`): `streamlit`, `python-dotenv`, `google-genai`, `langchain`, `langchain-core`, `langchain-google-genai`, `langgraph`, `PyMuPDF`. 
 
 **Default models** (`src/services/langchain_llm.py`): analysis `gemini-3.1-flash-lite`, strategy `gemini-3.1-pro` (overridable via `GEMINI_ANALYSIS_MODEL`, `GEMINI_STRATEGY_MODEL`, `GEMINI_MODEL`).
 
@@ -91,7 +86,7 @@ Postprocess steps (`postprocess.py`, `strategy_bundle.py`) are deterministic (pa
 
 ---
 
-## Repo layout (active code)
+## Repo layout
 
 ```text
 app/streamlit_app.py          # Demo UI (executive layout, custom CSS, theme-aware)
@@ -111,13 +106,11 @@ src/
   validation/                 # pytest suite (14 files)
 ```
 
-**Removed / archived** (not in working tree; recover from git tag `snapshot/legacy-unused-20260528-1416` if needed): legacy per-section DTC/IP insight chains, legacy PDF splitter, fuzzy `assign_category`, DTC/IP-specific retrieval helpers, dev/full UI toggle.
-
 ---
 
 ## End-to-end flow
 
-### Demo UI (what employers see)
+### Demo profile
 
 ```text
 Streamlit: choose strategic focus (DTC or IP) → upload PDF → Run analysis
@@ -136,8 +129,7 @@ dtc_results and/or ip_results, section_results, neutral_labeled_rows
 Streamlit: insight cards + evidence expanders + ReAct trace + recommendation cards
 ```
 
-### Full profile (code + tests only; not exposed in demo UI)
-
+### Full profile
 ```text
 [Analysis LangGraph — FULL profile]
   parallel_router → summarize_subsection → label_sections → assemble_outputs
@@ -154,8 +146,6 @@ Strategy graph as above
 1. User uploads a full report PDF (max 100 MB).
 2. `**split_pdf_into_dynamic_slices**` renders pages, asks Gemini vision for subsection titles and page ranges, emits one mini-PDF per subsection.
 3. `**ensure_sections_in_store_from_bytes**` uploads each slice to File Search with metadata; section list is cached on disk (`section_cache.json`).
-
-There is **only** the dynamic splitter path (no legacy fixed-section upload mode).
 
 ---
 
@@ -177,7 +167,6 @@ parallel_router
 ```
 
 - Labeling: `section_label_chain.label_neutral_rows_with_synthesis`
-- Categories come **only** from the LLM label JSON, not fuzzy title matching.
 
 ### Dev profile (`RunProfile.DEV_ONE_PER_CATEGORY`)
 
@@ -207,8 +196,6 @@ react_mode_router
 
 
 Output is capped to **one row per target category** (not three-way DTC/IP/OTHER sampling).
-
-**Note:** Pre-label “one per category” manifest heuristics are **gone**. Dev reduction is **after** ReAct judging (or after batch label in the full path).
 
 ---
 
@@ -266,7 +253,7 @@ build_bundle → generate_strategy → parse_and_dedupe → grounded_check (opti
 
 ---
 
-## Conceptual agents (as implemented)
+## Conceptual agents
 
 ### Analysis
 
@@ -278,8 +265,6 @@ build_bundle → generate_strategy → parse_and_dedupe → grounded_check (opti
 - `section_results`: OTHER-labeled subsections
 - `neutral_labeled_rows` / labels for UI
 - Dev: `react_messages` trace; warnings on partial Both-mode success
-
-**Not used anymore:** separate `run_dtc_insights_pipeline` / `run_ip_insights_pipeline`, per-section DTC/IP retrieval tools, title-based `assign_category`.
 
 ### Strategy
 
@@ -334,7 +319,7 @@ build_bundle → generate_strategy → parse_and_dedupe → grounded_check (opti
 
 ---
 
-## Implementation passes (historical)
+## Implementation passes
 
 ### Pass 1 — Text-only analysis ✅
 
@@ -354,7 +339,7 @@ LangGraph strategy pipeline + Streamlit recommendation cards.
 
 - Executive layout, custom CSS, light/dark themes
 - Demo locked to dev ReAct with single-focus mode
-- Live timer, always-on ReAct trace, employer-facing copy
+- Live timer, always-on ReAct trace
 
 ---
 
@@ -369,14 +354,8 @@ LangGraph strategy pipeline + Streamlit recommendation cards.
 - LLM section labeling (batch + ReAct judge/validator)
 - Strategy LangGraph + postprocess + UI
 - Unit tests under `src/validation/` (49 tests)
-- Repo cleanup: legacy chains/splitter/heuristics removed
-- Employer demo UI: executive layout, theme support, live trace, demo scope notice
+- Demo UI: executive layout, theme support, live trace, demo scope notice
 - Streamlit Community Cloud deploy: [music-agentic-analytics.streamlit.app](https://music-agentic-analytics.streamlit.app/)
-
-### Remaining (manual / optional)
-
-- QA on a full Luminate PDF (full profile end-to-end via API/env)
-- QA dev Both mode via API/tests (partial warning path)
 
 ---
 
@@ -384,7 +363,7 @@ LangGraph strategy pipeline + Streamlit recommendation cards.
 
 ### Technical
 
-- Arbitrary Luminate-style PDFs ingest via **vision LLM** dynamic split
+- Arbitrary PDFs ingest via **vision LLM** dynamic split
 - **RAG LLM** (File Search) grounds subsection evidence before summarization
 - **Analysis LLMs** produce summaries and DTC/IP labels; dev profile uses a **ReAct agent LLM**
 - **Strategy LLM** produces executive recommendations from the analysis bundle
@@ -393,7 +372,7 @@ LangGraph strategy pipeline + Streamlit recommendation cards.
 
 ### Demo quality
 
-- Clearly **agentic** (live ReAct trace; reasoning expander after run)
+- **Agentic** (live ReAct trace; reasoning expander after run)
 - **Grounded** narrative with section-level evidence in UI
 - **Executive** strategy output with evidence + action per recommendation
 - **Polished** visual design with light/dark theme support
@@ -407,6 +386,3 @@ LangGraph strategy pipeline + Streamlit recommendation cards.
 | -------------------------------------- | ----------------------------------------------------------- |
 | `snapshot/dev-full-20260528-1416`      | App snapshot before local cleanup (dev ReAct + full linear) |
 | `snapshot/legacy-unused-20260528-1416` | Four archived legacy modules only                           |
-
-
-Local cleanup was working-tree only; commit when ready.
