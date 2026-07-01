@@ -1,10 +1,10 @@
 # Agentic Music Analytics Pipeline
 
-An **agentic AI pipeline** that turns music industry PDFs into grounded insights and executive recommendations. A ReAct agent decides which report sections to read, when to judge them, and when it has enough evidence. LangGraph orchestrates the full run. The demo streams the agent's reasoning live in the UI.
+An agentic AI pipeline that turns music industry PDFs into grounded insights and executive recommendations. A ReAct agent decides which report sections to read, when to judge them, and when it has enough evidence. LangGraph orchestrates the full run. The demo streams the agent's reasoning live in the UI.
 
-**Live demo:** [music-agentic-analytics.streamlit.app](https://music-agentic-analytics.streamlit.app/)
+Live demo: [music-agentic-analytics.streamlit.app](https://music-agentic-analytics.streamlit.app/)
 
-> **Note:** Demo runs depend on model and resource availability at execution time. If a run fails or stalls, wait and try again after a while. See the [pipeline flow](#pipeline-flow) below for how the app works.
+> Note: Demo runs depend on model and resource availability at execution time. If a run fails or stalls, wait and try again after a while. See the [pipeline flow](#pipeline-flow) below for how the app works.
 
 ## Pipeline flow
 
@@ -34,7 +34,7 @@ flowchart TB
 | H-K | Strategy | Bundle insights, generate brief, parse, grounded check |
 | L | UI | Insight cards, ReAct trace, recommendations |
 
-The **ReAct trace** streams during the run and persists in the "How the AI reached these insights" expander.
+The ReAct trace streams during the run and persists in the "How the AI reached these insights" expander.
 
 ## Vision splitting
 
@@ -42,16 +42,16 @@ PyMuPDF renders the PDF to page images; Gemini vision returns section titles and
 
 ## How it works
 
-The analysis stage is a **ReAct agent** (Reason + Act) built with LangChain's `create_agent`. The LLM runs a loop:
+The analysis stage is a ReAct agent (Reason + Act) built with LangChain's `create_agent`. The LLM runs a loop:
 
-1. **Observe** pending subsections in the report manifest.
-2. **Act** by calling tools (list, fetch, judge, finish).
-3. **Reason** over tool output and decide what to do next.
-4. **Stop** when the strategic focus target is satisfied (one accepted DTC or IP hit).
+1. *Observe* pending subsections in the report manifest.
+2. *Act* by calling tools (list, fetch, judge, finish).
+3. *Reason* over tool output and decide what to do next.
+4. *Stop* when the strategic focus target is satisfied (one accepted DTC or IP hit).
 
 Each tool call can trigger nested LLM work (RAG retrieval, neutral summary, judge, validator). The agent picks which subsections to examine and in what order.
 
-The strategy stage is a **LangGraph pipeline** with a conditional retry: if recommendations fail a grounded check, the graph loops back for one regeneration pass.
+The strategy stage is a LangGraph pipeline with a conditional retry: if recommendations fail a grounded check, the graph loops back for one regeneration pass.
 
 ## Agent tools
 
@@ -66,7 +66,7 @@ The analysis agent (`src/agents/analysis/react_agents.py`) picks from these tool
 | `finish`                                                          | Check whether mode targets are met; stop or keep scanning                |
 
 
-The demo UI exposes **Fan & audience (DTC)** or **Catalog & IP** focus. The agent keeps scanning until it finds an accepted hit for that target.
+The demo UI exposes Fan & audience (DTC) or Catalog & IP focus. The agent keeps scanning until it finds an accepted hit for that target.
 
 ## LangGraph orchestration
 
@@ -81,20 +81,20 @@ Two compiled graphs drive the pipeline:
 
 Public entry points: `run_analysis()` and `run_strategy()` in `src/pipelines/`.
 
-A **full profile** path (`PIPELINE_RUN_PROFILE=full`) runs parallel summarization and batch labeling instead of ReAct. The demo UI uses the ReAct path.
+A full profile path (`PIPELINE_RUN_PROFILE=full`) runs parallel summarization and batch labeling instead of ReAct. The demo UI uses the ReAct path.
 
 ## Tech stack
 
 
-| Layer             | Technology                                    |
-| ----------------- | --------------------------------------------- |
-| **Agents**        | LangChain ReAct (`create_agent`) + tool loop  |
-| **Orchestration** | LangGraph (analysis + strategy graphs)        |
-| **LLM**           | Google Gemini                                 |
-| **RAG**           | Gemini File Search                            |
-| **UI**            | Streamlit (live agent trace, executive cards) |
-| **PDF**           | PyMuPDF + Gemini vision                       |
-| **Tests**         | pytest (49 tests, mocked agents/graphs)       |
+| Layer         | Technology                                    |
+| ------------- | ---------------------------------------------- |
+| Agents        | LangChain ReAct (`create_agent`) + tool loop  |
+| Orchestration | LangGraph (analysis + strategy graphs)        |
+| LLM           | Google Gemini                                 |
+| RAG           | Gemini File Search                            |
+| UI            | Streamlit (live agent trace, executive cards) |
+| PDF           | PyMuPDF + Gemini vision                       |
+| Tests         | pytest (49 tests, mocked agents/graphs)       |
 
 
 ## Quick start
@@ -127,6 +127,7 @@ Optional model overrides:
 GEMINI_ANALYSIS_MODEL=gemini-3.1-flash-lite   # ReAct agent, summaries, labels
 GEMINI_STRATEGY_MODEL=gemini-3.1-pro          # executive brief
 GEMINI_MODEL=gemini-2.5-flash                 # optional: vision split + File Search retrieval
+GEMINI_SYNTHESIS_MODEL=gemini-3.1-flash-lite  # optional: alias for analysis model in cache keys
 ```
 
 ### Run locally
@@ -141,7 +142,7 @@ Or:
 streamlit run app/streamlit_app.py
 ```
 
-Choose a strategic focus, upload a PDF, and run analysis. Sample PDFs are in `[docs/](docs/)`.
+Choose a strategic focus, upload a PDF, and run analysis. Sample PDFs are in [docs/](docs/).
 
 ## Demo UI
 
@@ -149,6 +150,7 @@ Choose a strategic focus, upload a PDF, and run analysis. Sample PDFs are in `[d
 | Control                  | Behavior                                             |
 | ------------------------ | ---------------------------------------------------- |
 | Strategic focus          | DTC or IP (required before run)                      |
+| Combined DTC+IP          | Shown but disabled (resource limits)                 |
 | Run analysis             | Starts the ReAct agent loop over indexed subsections |
 | ReAct trace              | Live tool calls and reasoning during the run         |
 | Generate executive brief | Runs the strategy LangGraph on accepted insights     |
@@ -159,6 +161,7 @@ Choose a strategic focus, upload a PDF, and run analysis. Sample PDFs are in `[d
 ```text
 app/streamlit_app.py          # Demo UI + live ReAct trace
 src/
+  config/                     # RunProfile, AnalysisMode
   agents/analysis/            # ReAct agents, tools, trace formatter
   agents/strategy/            # Strategy graph nodes + postprocess
   graphs/                     # analysis_graph, strategy_graph
@@ -169,6 +172,8 @@ src/
   validation/                 # pytest suite (agent + graph mocks)
 docs/                         # Documentation + sample PDFs
 scripts/run.py                # Streamlit launcher
+scripts/create_file_search_store.py
+.streamlit/config.toml        # Theme + upload limit
 ```
 
 ## API usage
@@ -199,10 +204,10 @@ Tests in `src/validation/` mock ReAct agents and LangGraph nodes. No API key req
 
 ## Deployment
 
-Hosted on [Streamlit Community Cloud](https://music-agentic-analytics.streamlit.app/). Set `GEMINI_API_KEY` in Streamlit secrets.
+Hosted on [Streamlit Community Cloud](https://music-agentic-analytics.streamlit.app/). Set `GEMINI_API_KEY` in Streamlit secrets. Cloud disk is ephemeral, so caches don't persist across restarts/redeploys; each session may re-upload subsections to File Search.
 
 ## Documentation
 
 Full agent design, LLM stage reference, and config details:
 
-`[docs/Documentation.md](docs/Documentation.md)`
+[docs/Documentation.md](docs/Documentation.md)
