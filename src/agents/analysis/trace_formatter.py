@@ -70,6 +70,45 @@ def _describe_judge_observation(text: str) -> str:
     return "Judge returned an unrecognized validator result."
 
 
+def _is_unfinished_finish_observation(event: dict[str, Any]) -> bool:
+    """True when finish says targets remain (start a new section cycle)."""
+    if str(event.get("kind") or "") != "observation":
+        return False
+    if str(event.get("tool") or "") != "finish":
+        return False
+    text = str(event.get("text") or "").strip()
+    if not text or text == "FINISH_OK":
+        return False
+    return True
+
+
+def renumber_trace_steps_for_display(
+    rows: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Assign sequential display steps per section cycle.
+
+    Each thought or tool starts a new step. Following observations inherit
+    that step. After a finish observation that is not FINISH_OK (Cannot
+    finish yet…), the counter resets so the next subsection starts at 1.
+    """
+    renumbered: list[dict[str, Any]] = []
+    display_step = 0
+    for event in rows:
+        kind = str(event.get("kind") or "")
+        updated = dict(event)
+        if kind in {"thought", "tool"}:
+            display_step += 1
+            updated["step"] = display_step
+        elif kind == "observation":
+            updated["step"] = max(display_step, 1)
+        else:
+            updated["step"] = max(display_step, 1)
+        renumbered.append(updated)
+        if _is_unfinished_finish_observation(updated):
+            display_step = 0
+    return renumbered
+
+
 def _format_one_event(event: dict[str, Any]) -> str | None:
     step = event.get("step", "?")
     kind = str(event.get("kind") or "")
@@ -128,19 +167,26 @@ def _format_one_event(event: dict[str, Any]) -> str | None:
     return None
 
 
+SECTION_CYCLE_SEPARATOR = "-----"
+
+
 def format_trace_rows_plain_english(
     rows: list[dict[str, Any]],
     *,
     max_lines: int = 160,
 ) -> str:
     lines: list[str] = []
-    for event in rows:
+    for event in renumber_trace_steps_for_display(rows):
         line = _format_one_event(event)
         if line:
             lines.append(line)
+        if _is_unfinished_finish_observation(event):
+            lines.append(SECTION_CYCLE_SEPARATOR)
     if not lines:
         return "Waiting for agent activity..."
+    # Drop a trailing separator with nothing after it.
+    while lines and lines[-1] == SECTION_CYCLE_SEPARATOR:
+        lines.pop()
     if max_lines > 0 and len(lines) > max_lines:
         lines = lines[-max_lines:]
     return "\n".join(lines)
-

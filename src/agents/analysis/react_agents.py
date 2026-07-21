@@ -96,9 +96,13 @@ def trace_from_messages(
     step = 0
     for message in messages:
         if isinstance(message, AIMessage):
+            # Each AIMessage is one ReAct turn, whether or not it includes
+            # visible "thought" text — most turns go straight to a tool
+            # call. Advance the step here so every turn gets its own
+            # number instead of everything collapsing into "Step 1".
+            step += 1
             text = _content_to_text(message.content)
             if text:
-                step += 1
                 trace.append(
                     {
                         "step": step,
@@ -111,7 +115,7 @@ def trace_from_messages(
                 args = tool_call.get("args")
                 trace.append(
                     {
-                        "step": max(step, 1),
+                        "step": step,
                         "kind": "tool",
                         "tool": name,
                         "args": args,
@@ -120,14 +124,23 @@ def trace_from_messages(
             continue
 
         if isinstance(message, ToolMessage):
-            trace.append(
-                {
-                    "step": max(step, 1),
-                    "kind": "observation",
-                    "tool": str(message.name or ""),
-                    "text": _content_to_text(message.content)[:1400],
-                }
-            )
+            tool_name = str(message.name or "")
+            observation_text = _content_to_text(message.content)[:1400]
+            event = {
+                "step": max(step, 1),
+                "kind": "observation",
+                "tool": tool_name,
+                "text": observation_text,
+            }
+            trace.append(event)
+            # Section cycle complete but targets remain — next subsection
+            # starts counting from step 1 again.
+            if (
+                tool_name == "finish"
+                and observation_text
+                and observation_text != "FINISH_OK"
+            ):
+                step = 0
     return trace
 
 

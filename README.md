@@ -153,6 +153,7 @@ Choose a strategic focus, upload a PDF, and run analysis. Sample PDFs are in [do
 | Combined DTC+IP          | Shown but disabled (resource limits)                 |
 | Run analysis             | Starts the ReAct agent loop over indexed subsections |
 | ReAct trace              | Live tool calls and reasoning during the run         |
+| Download run audit (JSON) | Local, offline snapshot of the run: mode, timings, labeled rows, insights, and the full ReAct trace |
 | Generate executive brief | Runs the strategy LangGraph on accepted insights     |
 
 

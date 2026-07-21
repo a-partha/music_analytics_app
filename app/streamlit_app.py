@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import html
+import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -17,7 +19,9 @@ from src.services.strategy_bundle import (
     build_strategy_bundle,
     strategy_bundle_has_content,
 )
+from src.services.audit_pack import build_audit_filename, build_audit_pack
 from src.services.file_search_retrieval import RetrievalError
+from src.services.langchain_llm import resolved_analysis_model
 from src.services.section_cache import hash_pdf_bytes
 from src.services.file_search_store import (
     DEFAULT_STORE_DISPLAY_NAME,
@@ -150,10 +154,6 @@ def _inject_styles() -> None:
             max-width: min(1120px, 100%);
         }
 
-        [data-testid="stVerticalBlock"] > div {
-            gap: 0.45rem;
-        }
-
         [data-testid="stWidgetLabel"] {
             margin-bottom: 0.2rem !important;
         }
@@ -188,7 +188,6 @@ def _inject_styles() -> None:
             font-size: 1.375rem !important;
             font-weight: 500 !important;
             letter-spacing: 0 !important;
-            margin-bottom: 0.35rem !important;
             color: var(--ui-text) !important;
         }
 
@@ -319,26 +318,71 @@ def _inject_styles() -> None:
             line-height: 1.45;
         }
 
-        .ui-card {
-            background: var(--ui-surface);
-            border-radius: var(--ui-radius);
-            padding: 1.25rem 1.35rem;
-            margin-bottom: 0.75rem;
-            box-shadow: var(--ui-elevation-1);
-            border: 1px solid var(--ui-line);
-        }
-        .ui-card-kicker {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--ui-accent);
-            margin-bottom: 0.25rem;
-        }
-        .ui-card-title {
+        .ui-card-header {
             font-size: 1.25rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--ui-text);
-            margin: 0 0 0.65rem 0;
-            line-height: 1.25;
+            margin: 0 0 0.85rem 0;
+            line-height: 1.35;
+        }
+        .ui-card-header-kicker {
+            color: var(--ui-accent);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .ui-card-section-label {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--ui-secondary);
+            margin: 0 0 0.75rem 0;
+            line-height: 1.4;
+            letter-spacing: 0.01em;
+        }
+
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] h1,
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] h2,
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] h3,
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] h4,
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] h5,
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] h6 {
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            line-height: 1.4 !important;
+            margin: 1rem 0 0.5rem 0 !important;
+            color: var(--ui-text) !important;
+        }
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] p,
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] ul,
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] ol {
+            font-size: 1rem !important;
+            line-height: 1.6 !important;
+            margin: 0 0 0.75rem 0 !important;
+            color: var(--ui-text);
+        }
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] li {
+            font-size: 1rem !important;
+            line-height: 1.6 !important;
+            margin: 0 0 0.35rem 0 !important;
+            color: var(--ui-text);
+        }
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] > p:last-child,
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] > ul:last-child,
+        div[data-testid="stVerticalBlockBorderWrapper"]
+            [data-testid="stMarkdownContainer"] > ol:last-child {
+            margin-bottom: 0 !important;
         }
 
         .ui-card-meta {
@@ -356,28 +400,20 @@ def _inject_styles() -> None:
             font-weight: 500;
         }
 
-        .ui-rec {
-            background: var(--ui-surface);
-            border: 1px solid var(--ui-line);
-            border-radius: var(--ui-radius);
-            padding: 1.25rem 1.35rem;
-            margin-bottom: 0.75rem;
-            box-shadow: var(--ui-elevation-1);
-        }
         .ui-rec-index {
-            font-size: 0.6875rem;
-            font-weight: 500;
+            font-size: 0.85rem;
+            font-weight: 700;
             letter-spacing: 0.04em;
             text-transform: uppercase;
-            color: var(--ui-secondary);
-            margin-bottom: 0.2rem;
+            color: var(--ui-accent);
+            margin-bottom: 0.35rem;
         }
         .ui-rec-title {
-            font-size: 1.125rem;
-            font-weight: 500;
+            font-size: 1.25rem;
+            font-weight: 600;
             color: var(--ui-text);
-            margin: 0 0 0.5rem 0;
-            line-height: 1.3;
+            margin: 0 0 0.75rem 0;
+            line-height: 1.35;
         }
 
         .ui-empty {
@@ -392,14 +428,14 @@ def _inject_styles() -> None:
             flex: 0 0 auto;
         }
         .ui-empty-title {
-            font-size: 0.9375rem;
-            font-weight: 500;
+            font-size: 1.05rem;
+            font-weight: 600;
             color: var(--ui-text);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.35rem;
         }
         .ui-empty-body {
-            font-size: 0.875rem;
-            line-height: 1.45;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
 
         .ui-divider {
@@ -427,7 +463,6 @@ def _inject_styles() -> None:
             border-color: var(--ui-line) !important;
             box-shadow: var(--ui-elevation-1) !important;
             padding: 1rem;
-            margin-bottom: 0.35rem;
             height: auto !important;
             align-self: flex-start;
             width: 100%;
@@ -549,6 +584,26 @@ def _inject_styles() -> None:
             border-radius: var(--ui-radius-sm);
         }
 
+        [data-testid="stMarkdownContainer"] code,
+        [data-testid="stCaptionContainer"] code {
+            background: var(--ui-muted) !important;
+            color: var(--ui-text) !important;
+            border-radius: 4px;
+            padding: 0.05rem 0.35rem;
+        }
+
+        div[data-testid="stTextArea"] textarea {
+            background: var(--ui-muted) !important;
+            color: var(--ui-text) !important;
+            border: 1px solid var(--ui-line) !important;
+            border-radius: var(--ui-radius-sm) !important;
+            font-family: "Google Sans", Roboto, Arial, sans-serif;
+        }
+        div[data-testid="stTextArea"] textarea:disabled {
+            opacity: 1 !important;
+            -webkit-text-fill-color: var(--ui-text) !important;
+        }
+
         .stCheckbox label[data-baseweb="checkbox"],
         .stRadio label[data-disabled="true"] {
             color: var(--ui-tertiary) !important;
@@ -609,6 +664,132 @@ def _inject_styles() -> None:
 
 def _esc(text: str) -> str:
     return html.escape(str(text or ""))
+
+
+_HEADING_LINE_RE = re.compile(r"^(#{1,6})\s+(.+)$")
+_BOLD_LINE_RE = re.compile(r"^\*\*(.+?)\*\*\s*$")
+
+
+def _prettify_section_label(label: str) -> str:
+    cleaned = str(label or "").strip().rstrip(":").strip()
+    if not cleaned:
+        return ""
+    return cleaned.title()
+
+
+def _split_insight_body(text: str) -> tuple[str | None, str]:
+    """Pull a leading report-section title out of the insight markdown body."""
+    raw = str(text or "").strip()
+    if not raw:
+        return None, ""
+
+    lines = raw.splitlines()
+    index = 0
+    while index < len(lines) and not lines[index].strip():
+        index += 1
+    if index >= len(lines):
+        return None, ""
+
+    first = lines[index].strip()
+    section: str | None = None
+    heading = _HEADING_LINE_RE.match(first)
+    bold = _BOLD_LINE_RE.match(first)
+    if heading:
+        section = _prettify_section_label(heading.group(2))
+    elif bold:
+        section = _prettify_section_label(bold.group(1))
+    else:
+        # Plain leading label like "ENGAGEMENT HORIZON:" (no markdown).
+        candidate = first.rstrip(":").strip()
+        letters = [ch for ch in candidate if ch.isalpha()]
+        if (
+            candidate
+            and letters
+            and all(ch.isupper() for ch in letters)
+            and not first.startswith(("-", "*", ">"))
+            and len(candidate.split()) <= 8
+        ):
+            section = _prettify_section_label(candidate)
+
+    if not section:
+        # Demote any remaining headings so they never outsize the card header.
+        return None, _normalize_card_markdown(raw)
+
+    rest_lines = lines[index + 1 :]
+    while rest_lines and not rest_lines[0].strip():
+        rest_lines.pop(0)
+    rest = _normalize_card_markdown("\n".join(rest_lines))
+    return section, rest
+
+
+def _normalize_card_markdown(text: str) -> str:
+    """Return text as-is. CSS handles heading sizes."""
+    return str(text or "").strip()
+
+
+def _render_insight_card(
+    *,
+    kicker: str,
+    title: str,
+    body: str,
+    evidence_by_section: dict[str, str],
+    empty_text: str,
+) -> None:
+    with st.container(border=True):
+        md_parts = [
+            f"""<div class="ui-card-header">
+<span class="ui-card-header-kicker">{_esc(kicker)}</span>: {_esc(title)}
+</div>"""
+        ]
+        
+        if body.strip():
+            section_label, rest = _split_insight_body(body)
+            if section_label:
+                md_parts.append(f'<div class="ui-card-section-label">{_esc(section_label)}</div>')
+            if rest:
+                md_parts.append(rest)
+            elif not section_label:
+                md_parts.append(f"_{empty_text}_")
+        else:
+            md_parts.append(f"_{empty_text}_")
+            
+        st.markdown("\n\n".join(md_parts), unsafe_allow_html=True)
+        
+        if evidence_by_section:
+            with st.expander("Supporting evidence from report"):
+                for section_name, evidence in evidence_by_section.items():
+                    st.markdown(f"**{_esc(section_name)}**")
+                    if evidence:
+                        st.write(evidence)
+                    else:
+                        st.write("_No excerpt available._")
+
+
+def _render_recommendation_card(*, index: int, rec: dict[str, str]) -> None:
+    title = rec.get("title") or f"Recommendation {index}"
+    insight = rec.get("insight") or ""
+    evidence = rec.get("evidence") or ""
+    action = rec.get("action") or ""
+    with st.container(border=True):
+        md_parts = [
+            f"""<div class="ui-rec-index">Recommendation {index}</div>
+<div class="ui-rec-title">{_esc(title)}</div>"""
+        ]
+        
+        if insight:
+            md_parts.append(_normalize_card_markdown(insight))
+            
+        meta_parts: list[str] = []
+        if evidence:
+            meta_parts.append(f"<strong>Evidence</strong><br>{_esc(evidence)}")
+        if action:
+            meta_parts.append(f"<strong>Recommended action</strong><br>{_esc(action)}")
+            
+        if meta_parts:
+            meta_html = '<div class="ui-card-meta">' + "<br><br>".join(meta_parts) + "</div>"
+            md_parts.append(meta_html)
+            
+        st.markdown("\n\n".join(md_parts), unsafe_allow_html=True)
 
 
 def _render_hero() -> None:
@@ -677,65 +858,6 @@ def _render_note(text: str) -> None:
 def _render_timer_message(message: str) -> None:
     safe = _esc(message).replace("\n", "<br>")
     st.markdown(f'<div class="ui-timer">{safe}</div>', unsafe_allow_html=True)
-
-
-def _render_insight_card(
-    *,
-    kicker: str,
-    title: str,
-    body: str,
-    evidence_by_section: dict[str, str],
-    empty_text: str,
-) -> None:
-    st.markdown(
-        f"""
-        <div class="ui-card">
-            <div class="ui-card-kicker">{_esc(kicker)}</div>
-            <div class="ui-card-title">{_esc(title)}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    if body.strip():
-        st.markdown(body)
-    else:
-        st.markdown(f"_{empty_text}_")
-    if evidence_by_section:
-        with st.expander("Supporting evidence from report"):
-            for section_name, evidence in evidence_by_section.items():
-                st.markdown(f"**{_esc(section_name)}**")
-                if evidence:
-                    st.write(evidence)
-                else:
-                    st.write("_No excerpt available._")
-
-
-def _render_recommendation_card(*, index: int, rec: dict[str, str]) -> None:
-    title = rec.get("title") or f"Recommendation {index}"
-    insight = rec.get("insight") or ""
-    evidence = rec.get("evidence") or ""
-    action = rec.get("action") or ""
-    st.markdown(
-        f"""
-        <div class="ui-rec">
-            <div class="ui-rec-index">Recommendation {index}</div>
-            <div class="ui-rec-title">{_esc(title)}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    if insight:
-        st.markdown(insight)
-    meta_parts: list[str] = []
-    if evidence:
-        meta_parts.append(f"<strong>Evidence</strong><br>{_esc(evidence)}")
-    if action:
-        meta_parts.append(f"<strong>Recommended action</strong><br>{_esc(action)}")
-    if meta_parts:
-        st.markdown(
-            '<div class="ui-card-meta">' + "<br><br>".join(meta_parts) + "</div>",
-            unsafe_allow_html=True,
-        )
 
 
 def _render_empty_state(*, title: str, body: str) -> None:
@@ -889,22 +1011,26 @@ with _output_col:
             else:
                 size_kb = uploaded_file.size / 1024
                 st.success(f"**{uploaded_file.name}** ready, {size_kb:.0f} KB")
-                with st.expander("Document processing details", expanded=False):
-                    reused = st.session_state.get("file_search_sections_reused")
-                    store_name = st.session_state.get("file_search_store_name")
-                    section_doc_names = st.session_state.get(
-                        "file_search_section_doc_names"
-                    )
-                    if reused is not None:
-                        st.caption(
-                            "Reused cached sections."
-                            if reused
-                            else "Indexed new sections from PDF."
-                        )
-                    if store_name and section_doc_names:
-                        st.caption(
-                            f"Indexed sections: **{len(section_doc_names)}**"
-                        )
+
+                _reused = st.session_state.get("file_search_sections_reused")
+                _store_name = st.session_state.get("file_search_store_name")
+                _section_doc_names = st.session_state.get(
+                    "file_search_section_doc_names"
+                )
+                if _reused is not None or (_store_name and _section_doc_names):
+                    with st.expander(
+                        "Document processing details", expanded=False
+                    ):
+                        if _reused is not None:
+                            st.caption(
+                                "Reused cached sections."
+                                if _reused
+                                else "Indexed new sections from PDF."
+                            )
+                        if _store_name and _section_doc_names:
+                            st.caption(
+                                f"Indexed sections: **{len(_section_doc_names)}**"
+                            )
         else:
             _render_empty_state(
                 title="No report uploaded",
@@ -1210,10 +1336,36 @@ with _insights_col:
                 key_prefix="final",
             )
 
+    if _react_trace or _labeled:
+        _audit_pack = build_audit_pack(
+            source_filename=st.session_state.get("pdf_name"),
+            analysis_mode=_mode_used,
+            run_profile=_analysis_profile.value,
+            model_name=resolved_analysis_model(None),
+            timings=st.session_state.get("last_summarize_timings"),
+            labeled_rows=_labeled,
+            dtc_results=st.session_state.get("dtc_results"),
+            ip_results=st.session_state.get("ip_results"),
+            strategy_results=st.session_state.get("strategy_results"),
+            react_trace=_react_trace,
+            react_trace_plain_english=format_trace_rows_plain_english(_react_trace),
+        )
+        st.download_button(
+            "Download run audit (JSON)",
+            data=json.dumps(_audit_pack, indent=2),
+            file_name=build_audit_filename(
+                source_filename=st.session_state.get("pdf_name"),
+                analysis_mode=_mode_used,
+            ),
+            mime="application/json",
+            use_container_width=True,
+            key="btn_download_audit",
+        )
+
 with _strategy_col:
     st.markdown("### Recommendations")
     st.caption(
-        "Strategic actions from the analysis above, with evidence and "
+        "Strategic actions from the analysis, with evidence and "
         "next steps for leadership review."
     )
 
