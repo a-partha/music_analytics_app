@@ -38,13 +38,13 @@ All analysis and strategy text is produced by LLMs. There are no rule-based insi
 
 ## LLM usage (Gemini)
 
-Every “intelligent” step in the pipeline is an LLM call. Two SDK paths are used:
+Every “intelligent” step in the pipeline is an LLM call. Two paths are used:
 
 
-| SDK                                                 | Used for                                                           |
+| Path                                                 | Used for                                                           |
 | --------------------------------------------------- | ------------------------------------------------------------------ |
-| `google-genai` (`genai.Client`)                     | PDF vision split, File Search retrieval (RAG over subsection PDFs) |
-| `langchain-google-genai` (`ChatGoogleGenerativeAI`) | Summaries, labels, ReAct agent, strategy generation                |
+| `google-genai` SDK (`genai.Client`)                     | PDF vision split, File Search retrieval (RAG over subsection PDFs) |
+| `langchain-google-genai` package (`ChatGoogleGenerativeAI`) | Summaries, labels, ReAct agent, strategy generation                |
 
 
 ### Where LLMs run
