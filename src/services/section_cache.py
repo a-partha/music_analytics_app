@@ -92,6 +92,16 @@ def get_cached_entry(pdf_hash: str) -> SectionCacheEntry | None:
     return entry
 
 
+def list_cached_entries() -> dict[str, SectionCacheEntry]:
+    """All cache rows from disk, without the remote validity check."""
+    return _load_index()
+
+
+def read_cached_entry(cache_key: str) -> SectionCacheEntry | None:
+    """One cache row from disk; never calls Gemini or prunes the index."""
+    return _load_index().get(cache_key)
+
+
 def put_cache_entry(pdf_hash: str, entry: SectionCacheEntry) -> None:
     index = _load_index()
     index[pdf_hash] = entry

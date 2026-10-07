@@ -1,0 +1,188 @@
+{
+  "sections_found": [
+    "CONSUMPTION METRICS",
+    "VITAL STATS",
+    "PREMIUM PRICING",
+    "WELCOME TO TRANSMEDIA",
+    "EVOLVING FANDOM",
+    "AI ARTISTS",
+    "YEAR-END CHARTS"
+  ],
+  "pairs": [
+    {
+      "id": "consumption_metrics_01",
+      "section": "CONSUMPTION METRICS",
+      "question": "What was the global On-Demand Audio streaming volume change percentage in 2025?",
+      "ground_truth": "Global On-Demand Audio streaming grew by +9.6% in 2025.",
+      "support_quote": "While global On-Demand Audio (ODA) streaming continued to climb, reaching a +9.6% growth rate"
+    },
+    {
+      "id": "consumption_metrics_02",
+      "section": "CONSUMPTION METRICS",
+      "question": "What was the volume change percentage for ex-U.S. On-Demand Audio song streams in 2025?",
+      "ground_truth": "Ex-U.S. On-Demand Audio song streams grew by +11.6% in 2025.",
+      "support_quote": "EX. U.S. ON-DEMAND AUDIO SONG STREAMS ... +11.6% Volume Change"
+    },
+    {
+      "id": "consumption_metrics_03",
+      "section": "CONSUMPTION METRICS",
+      "question": "What was the total volume of U.S. total album consumption in 2025?",
+      "ground_truth": "The total volume of U.S. total album consumption was 1.138 billion in 2025.",
+      "support_quote": "U.S. TOTAL ALBUM CONSUMPTION+ ... 1.138B"
+    },
+    {
+      "id": "consumption_metrics_04",
+      "section": "CONSUMPTION METRICS",
+      "question": "How many physical album sales (LP, CD and Cassette) occurred in Canada in 2025?",
+      "ground_truth": "There were 3.8 million total physical album sales in Canada in 2025.",
+      "support_quote": "CANADA TOTAL PHYSICAL ALBUM SALES (LP, CD AND CASSETTE) ... 3.8M"
+    },
+    {
+      "id": "vital_stats_01",
+      "section": "VITAL STATS",
+      "question": "What was the average daily number of ISRCs delivered to DSPs in 2025?",
+      "ground_truth": "An average of 106K ISRCs were delivered to DSPs each day in 2025.",
+      "support_quote": "106K ISRCs were delivered to DSPs (digital service providers like Spotify, Apple Music, YouTube et al.) each day in 2025"
+    },
+    {
+      "id": "vital_stats_02",
+      "section": "VITAL STATS",
+      "question": "What percentage of all audio streaming tracks had 1K streams or less in 2025?",
+      "ground_truth": "In 2025, 88% of tracks had 1K streams or less.",
+      "support_quote": "88% of tracks (or approx. 1 in 10) had 1K streams or less."
+    },
+    {
+      "id": "vital_stats_03",
+      "section": "VITAL STATS",
+      "question": "What percentage of U.S. On-Demand Audio streams came from songs released in the 2020s?",
+      "ground_truth": "Nearly half, or 47.9%, of U.S. On-Demand Audio streams came from songs released in the 2020s.",
+      "support_quote": "2020s 47.9%"
+    },
+    {
+      "id": "vital_stats_04",
+      "section": "VITAL STATS",
+      "question": "How many consecutive years have U.S. vinyl sales increased as of 2025?",
+      "ground_truth": "U.S. vinyl sales increased for the 19th straight year in 2025.",
+      "support_quote": "U.S. vinyl sales increased for the 19th straight year, growing +8.6% to 47.9M."
+    },
+    {
+      "id": "premium_pricing_01",
+      "section": "PREMIUM PRICING",
+      "question": "Which four territories accounted for nearly half of all global premium streams in 2025?",
+      "ground_truth": "The U.S., Mexico, Brazil, and Germany accounted for 48.9% of all Global Premium streams.",
+      "support_quote": "Nearly half (48.9%) of all Global Premium streams are from just four territories: the U.S., Mexico, Brazil and Germany."
+    },
+    {
+      "id": "premium_pricing_02",
+      "section": "PREMIUM PRICING",
+      "question": "Which global region converts to premium streams at the highest rate?",
+      "ground_truth": "Latin America (LATAM) is converting to premium streams at the highest rate.",
+      "support_quote": "At a Regional level, Latin America (LATAM) is converting to Premium streams at the highest rate"
+    },
+    {
+      "id": "premium_pricing_03",
+      "section": "PREMIUM PRICING",
+      "question": "What percentage of Japanese Gen Z were premium music streamers in 2025?",
+      "ground_truth": "The percentage of Japanese Gen Z who are premium music streamers rose to 42% in 2025.",
+      "support_quote": "Notably, the percentage of Japanese Gen Z who are Premium music streamers has risen to 42%"
+    },
+    {
+      "id": "premium_pricing_04",
+      "section": "PREMIUM PRICING",
+      "question": "Which DSP streaming platform do monthly Rock listeners over-index on?",
+      "ground_truth": "Monthly Rock listeners over-index on Apple Music.",
+      "support_quote": "Those who listen to Rock on a monthly basis are more often found on Apple Music"
+    },
+    {
+      "id": "welcome_to_transmedia_01",
+      "section": "WELCOME TO TRANSMEDIA",
+      "question": "Which music documentary ranked first in minutes watched in 2025?",
+      "ground_truth": "Becoming Led Zeppelin ranked number one in minutes watched in 2025.",
+      "support_quote": "Becoming Led Zeppelin ranks #1 in minutes watched"
+    },
+    {
+      "id": "welcome_to_transmedia_02",
+      "section": "WELCOME TO TRANSMEDIA",
+      "question": "How much did the Taylor Swift movie gross at the U.S. box office during its release?",
+      "ground_truth": "Taylor Swift: The Official Release Party of a Showgirl claimed $34M at the U.S. box office.",
+      "support_quote": "Taylor Swift: The Official Release Party of a Showgirl (distributed through AMC Theaters in October) claimed $34M at the U.S. box office"
+    },
+    {
+      "id": "welcome_to_transmedia_03",
+      "section": "WELCOME TO TRANSMEDIA",
+      "question": "What soundtrack became the first official soundtrack to hit number one on the Billboard 200 since Encanto?",
+      "ground_truth": "Netflix's KPop Demon Hunters became the first official soundtrack to hit #1 on the Billboard 200 since Encanto.",
+      "support_quote": "It became the first official soundtrack to hit #1 on the Billboard 200 since Encanto (2022)"
+    },
+    {
+      "id": "welcome_to_transmedia_04",
+      "section": "WELCOME TO TRANSMEDIA",
+      "question": "How many global interactive streams did the Daft Punk Experience on Fortnite generate in its first week?",
+      "ground_truth": "The Daft Punk Experience campaign generated 1.1 million Global Interactive Streams in its first week.",
+      "support_quote": "Overall, the campaign generated 1.1M Global Interactive Streams in its first week."
+    },
+    {
+      "id": "evolving_fandom_01",
+      "section": "EVOLVING FANDOM",
+      "question": "Which country moved up in the 2025 Global Export Power Rankings due to its Latin music exports?",
+      "ground_truth": "Brazil moved up in the export power rankings due to strengths in Latin music export.",
+      "support_quote": "While the Top 10 countries in export power remain the same since 2024, Brazil moves up due to strengths in Latin music export."
+    },
+    {
+      "id": "evolving_fandom_02",
+      "section": "EVOLVING FANDOM",
+      "question": "What percentage of Total On-Demand streams in Brazil come from local Brazilian artists?",
+      "ground_truth": "In Brazil, 75.2% of Total On-Demand streams come from a local Brazilian artist.",
+      "support_quote": "75.2% of Total On-Demand (Audio + Video) streams from a local Brazilian artist"
+    },
+    {
+      "id": "evolving_fandom_03",
+      "section": "EVOLVING FANDOM",
+      "question": "What percentage of U.S. music listeners are categorized as superfans in 2025?",
+      "ground_truth": "In 2025, 20% of U.S. music listeners are considered superfans.",
+      "support_quote": "In Luminate's most recent audience response data, 20% of U.S. music listeners are considered superfans"
+    },
+    {
+      "id": "ai_artists_01",
+      "section": "AI ARTISTS",
+      "question": "What was the reported advance given to the creator of the AI artist Xania Monet?",
+      "ground_truth": "The creator of Xania Monet received a reported $3 million advance.",
+      "support_quote": "reporting upwards of a $3M advance to Mississippi poet Telisha 'Nikki' Jones for her artist creation, Xania Monet"
+    },
+    {
+      "id": "ai_artists_02",
+      "section": "AI ARTISTS",
+      "question": "Which AI artist was the only one to reach the Top 97th percentile of U.S. artists in 2025?",
+      "ground_truth": "Xania Monet was the only AI artist to hit the Top 97th percentile of U.S. artists.",
+      "support_quote": "It's worth noting that only Xania Monet hit the Top 97th percentile of U.S. artists"
+    },
+    {
+      "id": "ai_artists_03",
+      "section": "AI ARTISTS",
+      "question": "What percentage of music listeners would be less interested in music if they knew it was produced using generative AI?",
+      "ground_truth": "44% of music listeners say they would be less interested in listening to music if they knew it was produced using generative AI.",
+      "support_quote": "44% of music listeners say they would be less interested in listening to music if they knew it was produced using generative Al."
+    },
+    {
+      "id": "year_end_charts_01",
+      "section": "YEAR-END CHARTS",
+      "question": "Which song was ranked first globally for On-Demand Audio streams in 2025?",
+      "ground_truth": "'Die With A Smile' by Lady Gaga & Bruno Mars was ranked number one with 2.858 billion streams.",
+      "support_quote": "Lady Gaga & Bruno Mars 1 'Die With A Smile' 2.858 billion"
+    },
+    {
+      "id": "year_end_charts_02",
+      "section": "YEAR-END CHARTS",
+      "question": "Which album had the highest total sales in the U.S. in 2025?",
+      "ground_truth": "'The Life of a Showgirl' by Taylor Swift had the highest total sales with 3,985,000 units sold.",
+      "support_quote": "1 Taylor Swift The Life of a Showgirl 3,985,000"
+    },
+    {
+      "id": "year_end_charts_03",
+      "section": "YEAR-END CHARTS",
+      "question": "What song ranked first on U.S. Top Radio Songs based on audience impressions?",
+      "ground_truth": "'Die With A Smile' by Lady Gaga & Bruno Mars ranked first with 3.054 billion audience impressions.",
+      "support_quote": "1 Lady Gaga & Bruno Mars 'Die With A Smile' 3.054 billion"
+    }
+  ]
+}

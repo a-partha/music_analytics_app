@@ -13,16 +13,6 @@ from google.genai import types
 DEFAULT_VISION_MODEL = "gemini-2.5-flash"
 DEFAULT_RENDER_DPI = 110
 
-SECTION_NAMES = (
-    "Midyear Metrics",
-    "Streaming Atlas",
-    "Import / Export",
-    "Engagement Horizon",
-    "Artist Spectrum",
-    "Future in Focus",
-    "Midyear Charts",
-)
-
 
 class SectionDetectionError(RuntimeError):
     pass

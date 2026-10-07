@@ -1,0 +1,4 @@
+-r requirements.txt
+deepeval>=4.2
+portalocker[win32]; sys_platform == "win32"
+openai

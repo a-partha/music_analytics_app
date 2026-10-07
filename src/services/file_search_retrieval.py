@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import os
 import re
+import sys
 import time
+from typing import NamedTuple
 
 from dotenv import load_dotenv
 from google import genai
@@ -23,8 +25,18 @@ NO_EVIDENCE_ESCAPE_SENTENCES = (
 )
 
 
+QUERY_CHUNKS_TOP_K = 12
+QUERY_CHUNKS_MAX_OUTPUT_TOKENS = 1024
+QUERY_CHUNKS_MAX_ATTEMPTS = 4
+QUERY_CHUNKS_BACKOFF_S = 2.0
+
+
 class RetrievalError(RuntimeError):
     pass
+
+
+class RetrievedChunk(NamedTuple):
+    text: str
 
 
 def _parse_retry_delay_seconds(message: str) -> float:
@@ -40,6 +52,13 @@ def _parse_retry_delay_seconds(message: str) -> float:
     if match:
         return float(match.group(1))
     return DEFAULT_RETRY_DELAY_S
+
+
+def _is_transient_unavailable(exc: Exception) -> bool:
+    if getattr(exc, "code", None) == 503:
+        return True
+    text = str(exc).lower()
+    return "unavailable" in text or "deadline expired" in text
 
 
 def _is_rate_limit_error(exc: Exception) -> bool:
@@ -200,3 +219,114 @@ def retrieve_subsection_evidence(
         section_name=display_title,
         label="generic",
     )
+
+
+def retrieve_query_chunks(
+    file_search_store_name: str,
+    query: str,
+    subsection_key: str | None = None,
+    model_name: str | None = None,
+    source_filename: str | None = None,
+) -> list[RetrievedChunk]:
+    """Raw File Search chunks for one question; see the _with_usage variant."""
+    chunks, _, _ = retrieve_query_chunks_with_usage(
+        file_search_store_name=file_search_store_name,
+        query=query,
+        subsection_key=subsection_key,
+        model_name=model_name,
+        source_filename=source_filename,
+    )
+    return chunks
+
+
+def retrieve_query_chunks_with_usage(
+    file_search_store_name: str,
+    query: str,
+    subsection_key: str | None = None,
+    model_name: str | None = None,
+    source_filename: str | None = None,
+) -> tuple[list[RetrievedChunk], object | None, float]:
+    """Raw File Search chunks, usage, and the successful call's latency in ms.
+
+    A 503 or deadline timeout waits 2s, 4s, then 8s and retries. A 429 raises
+    immediately. Returns [] when a call succeeds but no chunk text comes back.
+    Usage and latency come only from the successful attempt. Backoff sleep is
+    not included.
+    """
+    load_dotenv()
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY is not set.")
+
+    resolved_model = model_name or os.getenv(
+        "GEMINI_MODEL", DEFAULT_GEMINI_MODEL
+    )
+    parts: list[str] = []
+    if source_filename:
+        sf = _escape_metadata_filter_value(source_filename)
+        parts.append(f'source_filename = "{sf}"')
+    if subsection_key:
+        sk = _escape_metadata_filter_value(subsection_key)
+        parts.append(f'subsection_key = "{sk}"')
+    metadata_filter = " AND ".join(parts) or None
+
+    file_search = types.FileSearch(
+        file_search_store_names=[file_search_store_name],
+        metadata_filter=metadata_filter,
+        top_k=QUERY_CHUNKS_TOP_K,
+    )
+    client = genai.Client(api_key=api_key)
+    config = types.GenerateContentConfig(
+        temperature=0.0,
+        # Only the grounding chunks are used; this caps the discarded answer.
+        max_output_tokens=QUERY_CHUNKS_MAX_OUTPUT_TOKENS,
+        tools=[types.Tool(file_search=file_search)],
+    )
+    last_exc: Exception | None = None
+    retrieval_ms = 0.0
+    for attempt in range(QUERY_CHUNKS_MAX_ATTEMPTS):
+        try:
+            t_call = time.perf_counter()
+            response = client.models.generate_content(
+                model=resolved_model,
+                contents=query,
+                config=config,
+            )
+            retrieval_ms = round((time.perf_counter() - t_call) * 1000, 2)
+            break
+        except Exception as exc:
+            last_exc = exc
+            if _is_rate_limit_error(exc):
+                delay = _parse_retry_delay_seconds(str(exc))
+                raise RetrievalError(
+                    f"Gemini rate limit (429); retry in {delay:.0f}s. {exc}"
+                ) from exc
+            if (
+                not _is_transient_unavailable(exc)
+                or attempt + 1 >= QUERY_CHUNKS_MAX_ATTEMPTS
+            ):
+                status = getattr(exc, "code", None) or type(exc).__name__
+                raise RetrievalError(
+                    f"File Search call failed ({status}): {exc}"
+                ) from exc
+            delay = QUERY_CHUNKS_BACKOFF_S * (2 ** attempt)
+            print(
+                f"File Search unavailable, waiting {delay:.0f}s "
+                f"(attempt {attempt + 1} of {QUERY_CHUNKS_MAX_ATTEMPTS})",
+                file=sys.stderr,
+            )
+            time.sleep(delay)
+    else:
+        raise RetrievalError(f"File Search call failed: {last_exc}")
+
+    chunks: list[RetrievedChunk] = []
+    seen: set[str] = set()
+    for candidate in response.candidates or []:
+        metadata = candidate.grounding_metadata
+        for grounding_chunk in (metadata.grounding_chunks if metadata else None) or []:
+            context = grounding_chunk.retrieved_context
+            text = (context.text or "").strip() if context else ""
+            if text and text not in seen:
+                seen.add(text)
+                chunks.append(RetrievedChunk(text=text))
+    return chunks, response.usage_metadata, retrieval_ms

@@ -1,0 +1,127 @@
+{
+  "consumption_metrics_01": {
+    "correct": true,
+    "answer_sha256": "0780d457ce50c80089a0bb839deeb14dd9888d3d2fd7f18d364efd8f17feae49",
+    "note": ""
+  },
+  "consumption_metrics_02": {
+    "correct": true,
+    "answer_sha256": "49f19e755ff22a236d22d8d5f65b4738ab32b8633e521b55163cdb3900d446c1",
+    "note": ""
+  },
+  "consumption_metrics_03": {
+    "correct": true,
+    "answer_sha256": "c34e7c860f76b35b73a23a8553d62cfa8eb748e4bd6c4d7080ed5de7562baa6a",
+    "note": ""
+  },
+  "consumption_metrics_04": {
+    "correct": true,
+    "answer_sha256": "c2d839f0ae27579ae20df9945df0d20696499217f55005d11d6f6053aec32433",
+    "note": ""
+  },
+  "vital_stats_01": {
+    "correct": true,
+    "answer_sha256": "baad075bafaf8290b69a162a22235417af50f47fb67ce7bc5b76fba3553c0eb2",
+    "note": ""
+  },
+  "vital_stats_02": {
+    "correct": true,
+    "answer_sha256": "bc4aa15a0bf584166123f5516c5b9bea777da5c9dfefb01523dc21e20577b44a",
+    "note": ""
+  },
+  "vital_stats_03": {
+    "correct": true,
+    "answer_sha256": "7e8fe9d9576c04f24be36d6e501f13f975d62157cd9938b6dcdde3f2d97f130d",
+    "note": ""
+  },
+  "vital_stats_04": {
+    "correct": true,
+    "answer_sha256": "333201396eae6118f6fb0242adb7e874019f0af75a95c79d034ee94d3f5d0de8",
+    "note": ""
+  },
+  "premium_pricing_01": {
+    "correct": true,
+    "answer_sha256": "2aa058f72e9ec514ae459b8011aa1193533f08ad56e2387d239b6263325e101c",
+    "note": ""
+  },
+  "premium_pricing_02": {
+    "correct": true,
+    "answer_sha256": "25cd1cd3b2101c4d3ebe3c267ba7f6cb221e062515be50cae6e8c0807abe3f08",
+    "note": ""
+  },
+  "premium_pricing_03": {
+    "correct": true,
+    "answer_sha256": "c200e554755d5eef79f4c80ca6d2a0458e33a7bb61a2757df3ca680335a7e9b8",
+    "note": ""
+  },
+  "premium_pricing_04": {
+    "correct": true,
+    "answer_sha256": "1686708af8098abf63dceed9547dd535128bf21289ef591afe5e9025689f21fd",
+    "note": ""
+  },
+  "welcome_to_transmedia_01": {
+    "correct": true,
+    "answer_sha256": "2f06a400689b0c58f689a1703a1b7e48cf78cc33f9b87dd78eb2e7a55e98d62f",
+    "note": ""
+  },
+  "welcome_to_transmedia_02": {
+    "correct": true,
+    "answer_sha256": "997b5a878d6864fe055cc30d7e4f58caf075999fb2561e16f54ef5ed9996228b",
+    "note": ""
+  },
+  "welcome_to_transmedia_03": {
+    "correct": true,
+    "answer_sha256": "07b7f5f482adddfc1ebcd3983d35d43d689403e3518a2163f15c4706d9b3ce29",
+    "note": ""
+  },
+  "welcome_to_transmedia_04": {
+    "correct": true,
+    "answer_sha256": "7fd35f5b47eb2a68124a919b1ce32e61f5a2c8bd95cdfd6a72d12c463579cd1b",
+    "note": ""
+  },
+  "evolving_fandom_01": {
+    "correct": true,
+    "answer_sha256": "a115a746fc8b5b0b2e5043e044024f0ecf2c3e42e4a85e9613988161018edf05",
+    "note": ""
+  },
+  "evolving_fandom_02": {
+    "correct": true,
+    "answer_sha256": "740bd427068ca713913d02a8e73088ae0a620fdb49c9c77f7ed23c38cd03e1fe",
+    "note": ""
+  },
+  "evolving_fandom_03": {
+    "correct": true,
+    "answer_sha256": "083c3fdbdf966c148c4d29bc63463ed0c4d2500a17aaa609a0e1750b56a73e0f",
+    "note": ""
+  },
+  "ai_artists_01": {
+    "correct": true,
+    "answer_sha256": "b5e2bcb94a0ac0824bc04078f65f1ae05d90ecfb292f3fa483f78a15123ae6f7",
+    "note": ""
+  },
+  "ai_artists_02": {
+    "correct": true,
+    "answer_sha256": "75217201fae99755ab3d74f18b13d79f95abba34400c34789d921559f21b77eb",
+    "note": ""
+  },
+  "ai_artists_03": {
+    "correct": false,
+    "answer_sha256": "72282bcea043a37b02e6bcb4c9f7ed7834bef08e499d4b31f5557aa7513b647b",
+    "note": "answered 43%, source says 44%"
+  },
+  "year_end_charts_01": {
+    "correct": true,
+    "answer_sha256": "98b6da36403494e084fe897e477ddf8a626a1f2741b9819d38361a224ec36b78",
+    "note": ""
+  },
+  "year_end_charts_02": {
+    "correct": true,
+    "answer_sha256": "fd8f13498a9049c45a805197ba82c5d95abb2f4dfc747c14ba9dae3f6a51a9e7",
+    "note": ""
+  },
+  "year_end_charts_03": {
+    "correct": true,
+    "answer_sha256": "42c0c76b0ca625611d0e8398824a31b31dcd8da53e61d1d36b30900ec622db15",
+    "note": ""
+  }
+}
