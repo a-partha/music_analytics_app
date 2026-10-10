@@ -37,7 +37,7 @@ flowchart TB
     end
 
     subgraph StrategyGraph I(["2. Strategy Graph (Executive Brief)"])
-        (["User clicks: Generate Executive Brief"]) --> J["Build Strategy Bundle (DTC/IP Insights)"]
+        ["User clicks: Generate Executive Brief"] --> J["Build Strategy Bundle (DTC/IP Insights)"]
         J --> K["Generate Strategic Recommendations"]
         K --> L["Parse Markdown & Deduplicate"]
         L --> M{"Check passes?"}
