@@ -255,7 +255,7 @@ python src/validation/evals/run_evals.py --summarize-only
 
 Results are written to `src/validation/evals/testing_report.json`.
 
-Section-locked 25-item run. A metric passes at a score of 0.7 or higher. Cost is a list-price estimate, not an invoice. Details: [docs/Documentation.md](docs/Documentation.md#7-verification-benchmarking-and-telemetry).
+Section-locked 25-item run. A metric passes at a score of 0.7 or higher. Cost is a list-price estimate, not an invoice. Details: [docs/Documentation.md](docs/Documentation.md#evaluation).
 
 | Result | Value |
 | --- | --- |
