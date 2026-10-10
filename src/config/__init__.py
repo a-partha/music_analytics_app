@@ -4,11 +4,14 @@ from src.config.run_profiles import (
     resolve_run_profile,
 )
 from src.config.analysis_mode import AnalysisMode, resolve_analysis_mode
+from src.config.models import fallback_model_is_set, resolve_model
 
 __all__ = (
     "AnalysisMode",
     "RunProfile",
+    "fallback_model_is_set",
     "profile_from_state_value",
     "resolve_analysis_mode",
+    "resolve_model",
     "resolve_run_profile",
 )

@@ -10,7 +10,8 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-DEFAULT_VISION_MODEL = "gemini-2.5-flash"
+from src.config.models import resolve_model
+
 DEFAULT_RENDER_DPI = 110
 
 
@@ -144,9 +145,7 @@ def _detect_discovered_sections(
         raise SectionDetectionError("PDF has no pages.")
 
     client = genai.Client(api_key=api_key)
-    resolved_model = model_name or os.getenv(
-        "GEMINI_MODEL", DEFAULT_VISION_MODEL
-    )
+    resolved_model = resolve_model(None, model_name)
 
     parts: list[object] = [_build_discovery_vision_prompt()]
     for page_idx, png in enumerate(page_pngs):

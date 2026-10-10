@@ -9,10 +9,7 @@ import threading
 from pathlib import Path
 from typing import Any, TypedDict
 
-from dotenv import load_dotenv
-
-from src.services.file_search_retrieval import DEFAULT_GEMINI_MODEL
-from src.services.langchain_llm import DEFAULT_GEMINI_ANALYSIS_MODEL
+from src.config.models import resolve_model
 from src.services.section_cache import CACHE_DIR_DEFAULT
 
 SCHEMA_TOKEN = "neutral_cache_v1"
@@ -34,13 +31,11 @@ def _neutral_cache_path() -> Path:
 
 
 def resolved_gemini_model(explicit: str | None) -> str:
-    load_dotenv()
-    return explicit or os.getenv("GEMINI_MODEL", DEFAULT_GEMINI_MODEL)
+    return resolve_model(None, explicit)
 
 
 def resolved_synthesis_model(explicit: str | None) -> str:
-    load_dotenv()
-    return explicit or os.getenv("GEMINI_ANALYSIS_MODEL") or os.getenv("GEMINI_SYNTHESIS_MODEL") or os.getenv("GEMINI_MODEL") or DEFAULT_GEMINI_ANALYSIS_MODEL
+    return resolve_model("ANALYSIS_MODEL", explicit)
 
 
 def make_neutral_cache_key(

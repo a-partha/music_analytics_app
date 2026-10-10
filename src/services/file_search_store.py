@@ -69,6 +69,48 @@ def _get_document_by_display_name(
     return None
 
 
+def _is_doc_for_source(doc: object, base_stem: str, source_filename: str) -> bool:
+    disp = getattr(doc, "display_name", None) or ""
+    if disp == source_filename or disp.startswith(f"{base_stem}__"):
+        return True
+    custom_metadata = getattr(doc, "custom_metadata", None) or []
+    for item in custom_metadata:
+        key = (
+            getattr(item, "key", None)
+            or (item.get("key") if isinstance(item, dict) else None)
+        )
+        val = (
+            getattr(item, "string_value", None)
+            or (item.get("string_value") if isinstance(item, dict) else None)
+        )
+        if key == "source_filename" and val == source_filename:
+            return True
+    return False
+
+
+def _delete_stale_documents_for_source(
+    client: genai.Client, store_name: str, source_filename: str
+) -> int:
+    """Delete prior documents in store_name matching source_filename or its slices."""
+    base_stem = Path(source_filename).stem
+    deleted_count = 0
+    try:
+        docs = list(client.file_search_stores.documents.list(parent=store_name))
+    except Exception:
+        return 0
+    for doc in docs:
+        doc_name = getattr(doc, "name", None)
+        if not doc_name:
+            continue
+        if _is_doc_for_source(doc, base_stem, source_filename):
+            try:
+                client.file_search_stores.documents.delete(name=doc_name)
+                deleted_count += 1
+            except Exception:
+                pass
+    return deleted_count
+
+
 def _wait_for_operation(
     client: genai.Client, operation: object, timeout_seconds: int
 ) -> object:
@@ -209,6 +251,7 @@ def ensure_sections_in_store_from_bytes(
     slices = split_pdf_into_dynamic_slices(
         file_bytes, model_name=model_name
     )
+    _delete_stale_documents_for_source(client, store.name, display_name)
     for sl in slices:
         manifest.append(
             {

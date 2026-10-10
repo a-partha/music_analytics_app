@@ -1,0 +1,147 @@
+{
+  "run_at": "2026-10-09T04:53:20+00:00",
+  "mode": "section_locked",
+  "models": {
+    "retrieval": "gemini-2.5-flash",
+    "generator": "gemini-3.1-flash-lite",
+    "judge": "nvidia/nemotron-3-super-120b-a12b"
+  },
+  "summary": {
+    "total_queries": 1,
+    "cached_queries": 0,
+    "live_queries": 1,
+    "passed_queries": 1,
+    "pass_rate": 1.0,
+    "metric_passes": {
+      "Faithfulness": {
+        "passed": 1,
+        "scored": 1
+      },
+      "Answer Relevancy": {
+        "passed": 1,
+        "scored": 1
+      },
+      "Contextual Recall": {
+        "passed": 1,
+        "scored": 1
+      }
+    },
+    "manual_review": {
+      "reviewed": 0,
+      "unreviewed": 1,
+      "correct": 0,
+      "judge_agreement": 0
+    },
+    "generation_usage_missing": 0,
+    "latency": {
+      "retrieval": {
+        "mean_ms": 8376.77,
+        "median_ms": 8376.77,
+        "p95_ms": 8376.77,
+        "max_ms": 8376.77
+      },
+      "generation": {
+        "mean_ms": 16831.13,
+        "median_ms": 16831.13,
+        "p95_ms": 16831.13,
+        "max_ms": 16831.13
+      },
+      "pipeline": {
+        "mean_ms": 25207.9,
+        "median_ms": 25207.9,
+        "p95_ms": 25207.9,
+        "max_ms": 25207.9
+      },
+      "judge": {
+        "mean_ms": 7299.6,
+        "median_ms": 7299.6,
+        "p95_ms": 7299.6,
+        "max_ms": 7299.6
+      }
+    },
+    "mean_tokens": {
+      "retrieval_input": 505.0,
+      "retrieval_output": 1670.0,
+      "generation_input": 476.0,
+      "generation_output": 22.0,
+      "judge_input": 4193.0,
+      "judge_output": 702.0
+    },
+    "financials": {
+      "actual_run_spend_usd": 0.003434,
+      "cold_run_estimate_usd": 0.003434,
+      "judge_overhead_usd": 0.000651,
+      "pricing": "list-price estimate, not an invoice",
+      "pricing_models": {
+        "production": "gemini-2.5-flash",
+        "judge": "nvidia/nemotron-3-super-120b-a12b"
+      }
+    }
+  },
+  "results": [
+    {
+      "id": "consumption_metrics_01",
+      "question": "What was the global On-Demand Audio streaming volume change percentage in 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 8376.77,
+          "generation_ms": 16831.13,
+          "pipeline_ms": 25207.9,
+          "judge_api_ms": 7299.6
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 505,
+            "output": 1670,
+            "cost_usd": 0.002631
+          },
+          "generation_tokens": {
+            "input": 476,
+            "output": 22,
+            "cost_usd": 0.000152,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.002783
+        },
+        "judge_usage": {
+          "input_tokens": 4193,
+          "output_tokens": 702,
+          "total_tokens": 4895,
+          "cost_usd": 0.000651,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response is fully relevant, directly addressing the query about the global On-Demand Audio streaming volume change percentage in 2025 with no irrelevant statements, making it accurate and on-topic.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the expected output sentence is fully supported by the first node in retrieval context, which states that Global On-Demand Audio Song Streams increased by 9.6% from 4.7T in 2024 to 5.1T in 2025, directly matching the claim.",
+          "error": null
+        }
+      },
+      "ground_truth": "Global On-Demand Audio streaming grew by +9.6% in 2025.",
+      "retrieved_context": [
+        "Here are 9 short excerpts or data points from the \"CONSUMPTION METRICS & VITAL STATS\" section:\n\n**EARLY**\n*   Global On-Demand Audio Song Streams increased by 9.6% from 4.7T in 2024 to 5.1T in 2025.\n*   U.S. Total Album Consumption+ (ALBUM + TEA + SEA ON-DEMAND AUDIO)** saw a +4.8% volume change, from 1.087B in 2024 to 1.138B in 2025.\n*   U.S. On-Demand Audio Song Streams increased by 4.6%, from 1.3T in 2024 to 1.4T in 2025.\n\n**MIDDLE**\n*   An average of 106K ISRCs were delivered to DSPs each day in 2025, marking a +7% increase over the 99K daily average in 2024.\n*   88% of tracks (or approximately 1 in 10) had 1K streams or less in 2025.\n*   Tracks between 1M-50M Global audio streams make up 49.4% of all streaming, emphasizing that these 541K tracks form the backbone of global music consumption.\n\n**LATE**\n*   43% of U.S. On-Demand Audio Streams are from tracks released in the last five years (2021-2025).\n*   Rock grew its piece of the audio streaming pie the most in 2025, increasing +.30 sharepoints over last year.\n*   Latin's premium streaming has grown its share of genre activity from 58% in 2020 to 70% in 2025."
+      ],
+      "answer": "The global On-Demand Audio streaming volume increased by 9.6% in 2025."
+    }
+  ]
+}

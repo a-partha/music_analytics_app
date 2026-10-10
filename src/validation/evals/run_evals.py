@@ -14,6 +14,20 @@ ROOT_DIR = Path(__file__).resolve().parents[3]
 if str(ROOT_DIR) not in sys.path:
   sys.path.insert(0, str(ROOT_DIR))
 
+def _force_utf8_stdio():
+  """Let DeepEval's checkmark and sparkle print on a cp1252 Windows console."""
+  for stream in (sys.stdout, sys.stderr):
+    reconfigure = getattr(stream, "reconfigure", None)
+    if reconfigure is None:
+      continue
+    try:
+      reconfigure(encoding="utf-8", errors="replace")
+    except (OSError, ValueError):
+      pass
+
+
+_force_utf8_stdio()
+
 # Must be set before deepeval is imported. Rate-limit retries below can
 # push a single test case past DeepEval's 180s per-test-case default.
 os.environ.setdefault("DEEPEVAL_DISABLE_TIMEOUTS", "1")
@@ -36,9 +50,10 @@ from google import genai
 from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_google_genai import ChatGoogleGenerativeAI
 
+from src.config.models import resolve_model
 from src.services.file_search_retrieval import (
     RetrievalError,
-    retrieve_query_chunks_with_usage,
+    retrieve_subsection_evidence_with_usage,
 )
 from src.services.file_search_store import CACHE_VERSION_TAG, SPLITTER_MODE
 from src.services.section_cache import list_cached_entries
@@ -52,23 +67,21 @@ _ARGS = sys.argv[1:]
 # so generation cost is measured.
 # Pass --use-cache to reuse a saved answer when the retrieved text matches.
 _NO_CACHE = "--use-cache" not in _ARGS
-# Component tier: The default filters by source_filename only, 
-# so it searches every section of that PDF.
-_SECTION_LOCKED = "--section-locked" in _ARGS
+# Section lock is required. Every retrieval filters on source_filename and
+# subsection_key. Passing --section-locked changes nothing.
+_SECTION_LOCKED = True
 # Rebuild the summary of an existing results file. No API calls.
 _SUMMARIZE_ONLY = "--summarize-only" in _ARGS
 
 _EVAL_DIR = Path(__file__).resolve().parent
-_QA_PATH = _EVAL_DIR / "synthetic_qa.json"
+_QA_PATH = _EVAL_DIR / "static_qa.json"
 _ANSWERS_PATH = _EVAL_DIR / "generated_answers.json"
 _MANUAL_REVIEW_PATH = _EVAL_DIR / "manual_review.json"
 
 
 def _results_path():
-  name = "smoke_test_results_cold" if _NO_CACHE else "smoke_test_results_cached"
-  if _SECTION_LOCKED:
-    name += "_section_locked"
-  return _EVAL_DIR / f"{name}.json"
+  # Section lock is always on. This name keeps the cold and smoke reports.
+  return _EVAL_DIR / "testing_report.json"
 
 
 def _cache_key(item_id):
@@ -79,21 +92,22 @@ def _cache_key(item_id):
 
 _RESULTS_PATH = _results_path()
 
-EVAL_RETRIEVAL_MODEL = os.getenv(
-    "EVAL_RETRIEVAL_MODEL", "gemini-3.1-flash-lite"
-)
-GENERATOR_MODEL = os.getenv("EVAL_GENERATOR_MODEL", EVAL_RETRIEVAL_MODEL)
-JUDGE_MODEL = os.getenv(
-    "EVAL_JUDGE_MODEL", "nvidia/nemotron-3-super-120b-a12b"
-)
+# Each eval model falls back to FALLBACK_MODEL, the app's retrieval model.
+EVAL_RETRIEVAL_MODEL = resolve_model("EVAL_RETRIEVAL_MODEL")
+GENERATOR_MODEL = resolve_model("EVAL_GENERATOR_MODEL")
+# FALLBACK_MODEL is a Gemini model, so it cannot back up the NVIDIA judge.
+JUDGE_MODEL = (os.getenv("EVAL_JUDGE_MODEL") or "").strip()
+if not JUDGE_MODEL:
+  raise RuntimeError("EVAL_JUDGE_MODEL is missing. Add it to .env.")
 JUDGE_BASE_URL = "https://integrate.api.nvidia.com/v1"
 METRIC_THRESHOLD = 0.7
 
-# USD per token. These list prices fit the default models only
-# (gemini-3.1-flash-lite and nvidia/nemotron-3-super-120b-a12b).
-# Split the production rates when retrieval and generation models differ.
-PRODUCTION_INPUT_RATE = 0.25 / 1_000_000
-PRODUCTION_OUTPUT_RATE = 1.50 / 1_000_000
+# USD per token. Split by retrieval model (gemini-3.1-flash-lite),
+# generator model (gemini-3.5-flash-lite), and judge (nemotron-3-super-120b).
+RETRIEVAL_INPUT_RATE = 0.25 / 1_000_000
+RETRIEVAL_OUTPUT_RATE = 1.50 / 1_000_000
+GENERATOR_INPUT_RATE = 0.30 / 1_000_000
+GENERATOR_OUTPUT_RATE = 2.50 / 1_000_000
 JUDGE_INPUT_RATE = 0.08 / 1_000_000
 JUDGE_OUTPUT_RATE = 0.45 / 1_000_000
 
@@ -230,10 +244,17 @@ def _retrieval_token_counts(usage, label):
   return input_tokens, output_tokens
 
 
-def _production_cost(input_tokens, output_tokens):
+def _retrieval_cost(input_tokens, output_tokens):
   return (
-      input_tokens * PRODUCTION_INPUT_RATE
-      + output_tokens * PRODUCTION_OUTPUT_RATE
+      (input_tokens or 0) * RETRIEVAL_INPUT_RATE
+      + (output_tokens or 0) * RETRIEVAL_OUTPUT_RATE
+  )
+
+
+def _generator_cost(input_tokens, output_tokens):
+  return (
+      (input_tokens or 0) * GENERATOR_INPUT_RATE
+      + (output_tokens or 0) * GENERATOR_OUTPUT_RATE
   )
 
 
@@ -386,33 +407,37 @@ def _answer_text(response):
 
 
 def _build_record(item, store_name, source_filename, generator_llm,
-                  answer_cache, subsection_key=None):
+                  answer_cache, subsection_key, display_title):
   query = item["question"]
+  if (
+      not source_filename
+      or not str(subsection_key or "").strip()
+      or not str(display_title or "").strip()
+  ):
+    raise RuntimeError(
+        f"[{item['id']}] Section-locked retrieval requires source_filename, "
+        "subsection_key, and display_title."
+    )
   try:
-    retrieved_chunks, search_usage, retrieval_ms = (
-        retrieve_query_chunks_with_usage(
+    evidence, search_usage, retrieval_ms = (
+        retrieve_subsection_evidence_with_usage(
             file_search_store_name=store_name,
-            query=query,
             subsection_key=subsection_key,
-            model_name=EVAL_RETRIEVAL_MODEL,
+            display_title=display_title,
             source_filename=source_filename,
+            model_name=EVAL_RETRIEVAL_MODEL,
         )
     )
   except RetrievalError as exc:
     raise RuntimeError(
-        f"[{item['id']}] Retrieval failed in {source_filename!r}: {exc}"
+        f"[{item['id']}] Retrieval failed in {source_filename!r} "
+        f"section {display_title!r}: {exc}"
     ) from exc
-  if not retrieved_chunks:
-    raise RuntimeError(
-        f"[{item['id']}] Retrieval failed in {source_filename!r}: "
-        "grounding_chunks empty."
-    )
   retrieval_in, retrieval_out = _retrieval_token_counts(
       search_usage, f"[{item['id']}] File Search"
   )
 
-  retrieved_chunk_texts = [chunk.text for chunk in retrieved_chunks]
-  context = "\n\n".join(retrieved_chunk_texts)
+  context = evidence
   context_hash = hashlib.sha256(context.encode("utf-8")).hexdigest()
 
   prompt = (
@@ -468,19 +493,19 @@ def _build_record(item, store_name, source_filename, generator_llm,
           input=query,
           actual_output=generated_answer,
           expected_output=item["ground_truth"],
-          retrieval_context=retrieved_chunk_texts,
+          retrieval_context=[evidence],
       ),
       "cached": is_cached,
       "retrieval_ms": retrieval_ms,
       "generation_ms": generation_ms,
       "retrieval_in": retrieval_in,
       "retrieval_out": retrieval_out,
-      "retrieval_cost": _production_cost(retrieval_in, retrieval_out),
+      "retrieval_cost": _retrieval_cost(retrieval_in, retrieval_out),
       "generation_in": generation_in,
       "generation_out": generation_out,
       "generation_cost": (
           0.0 if generation_usage_missing
-          else _production_cost(generation_in, generation_out)
+          else _generator_cost(generation_in, generation_out)
       ),
       "generation_usage_missing": generation_usage_missing,
   }
@@ -738,15 +763,17 @@ def _summary(review_rows):
           "judge_overhead_usd": round(judge_total, 6),
           "pricing": "list-price estimate, not an invoice",
           "pricing_models": {
-              "production": "gemini-3.1-flash-lite",
-              "judge": "nvidia/nemotron-3-super-120b-a12b",
+              "retrieval": EVAL_RETRIEVAL_MODEL,
+              "generator": GENERATOR_MODEL,
+              "judge": JUDGE_MODEL,
           },
       },
   }
 
 
-def _subsection_keys(qa_items, manifest):
-  keys = {}
+def _locked_sections(qa_items, manifest):
+  """Map each QA id to that section's subsection_key and display_title."""
+  locked = {}
   for item in qa_items:
     row = _match_subsection(item["section"], manifest)
     if row is None:
@@ -754,8 +781,18 @@ def _subsection_keys(qa_items, manifest):
           f"[{item['id']}] Section {item['section']!r} does not map to "
           "exactly one manifest title."
       )
-    keys[item["id"]] = row["subsection_key"]
-  return keys
+    subsection_key = str(row.get("subsection_key") or "").strip()
+    display_title = str(row.get("display_title") or "").strip()
+    if not subsection_key or not display_title:
+      raise RuntimeError(
+          f"[{item['id']}] Manifest row for {item['section']!r} is missing "
+          "subsection_key or display_title."
+      )
+    locked[item["id"]] = {
+        "subsection_key": subsection_key,
+        "display_title": display_title,
+    }
+  return locked
 
 
 def _write_run(run):
@@ -798,9 +835,8 @@ def main():
   store_entry = _resolve_store(sections)
   store_name = store_entry["store_name"]
   source_filename = _resolve_source_filename(store_entry)
-  locked_keys = (
-      _subsection_keys(qa_items, store_entry.get("manifest") or [])
-      if _SECTION_LOCKED else {}
+  locked_sections = _locked_sections(
+      qa_items, store_entry.get("manifest") or []
   )
 
   generator_llm = ChatGoogleGenerativeAI(model=GENERATOR_MODEL, temperature=0.0)
@@ -815,7 +851,8 @@ def main():
   records = [
       _build_record(
           item, store_name, source_filename, generator_llm, answer_cache,
-          subsection_key=locked_keys.get(item["id"]),
+          subsection_key=locked_sections[item["id"]]["subsection_key"],
+          display_title=locked_sections[item["id"]]["display_title"],
       )
       for item in qa_items
   ]

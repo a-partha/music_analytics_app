@@ -51,7 +51,7 @@ _ONLY_ID = None
 #"consumption_metrics_03"
 
 # 1. Load Data
-_QA_PATH = os.path.join(os.path.dirname(__file__), "synthetic_qa.json")
+_QA_PATH = os.path.join(os.path.dirname(__file__), "static_qa.json")
 with open(_QA_PATH, encoding="utf-8") as qa_file:
   qa_data = json.load(qa_file)
 qa_items = [

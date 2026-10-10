@@ -10,7 +10,8 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
+from src.config.models import resolve_model
+
 DEFAULT_FILE_SEARCH_TOP_K = 12
 
 MAX_RETRIES_ON_RATE_LIMIT = 3
@@ -74,15 +75,22 @@ def _generate_with_backoff(
     model: str,
     contents: object,
     config: object,
-) -> object:
+) -> tuple[object, float]:
+    """Return the response and the successful call's latency in ms.
+
+    Backoff sleep is not included. A 429 retries; any other error raises.
+    """
     last_exc: Exception | None = None
     for attempt in range(MAX_RETRIES_ON_RATE_LIMIT):
         try:
-            return client.models.generate_content(
+            t_call = time.perf_counter()
+            response = client.models.generate_content(
                 model=model,
                 contents=contents,
                 config=config,
             )
+            latency_ms = round((time.perf_counter() - t_call) * 1000, 2)
+            return response, latency_ms
         except Exception as exc:
             is_rate_limit = _is_rate_limit_error(exc)
             if not is_rate_limit:
@@ -139,10 +147,15 @@ def _retrieve_with_no_evidence_retry(
     config: object,
     section_name: str,
     label: str,
-) -> str:
+) -> tuple[str, object, float]:
+    """Return excerpt text, the response, and that call's latency in ms.
+
+    A short or empty reply is retried once. Latency and the response are
+    from the call whose text is returned. Backoff sleep is not included.
+    """
     last_text = ""
     for attempt in range(NO_EVIDENCE_MAX_ATTEMPTS):
-        response = _generate_with_backoff(
+        response, latency_ms = _generate_with_backoff(
             client,
             model=model,
             contents=contents,
@@ -151,7 +164,7 @@ def _retrieve_with_no_evidence_retry(
         raw_text = (response.text or "").strip()
         looks_like_empty = _looks_like_no_evidence(raw_text)
         if not looks_like_empty:
-            return raw_text
+            return raw_text, response, latency_ms
         last_text = raw_text
     raise RetrievalError(
         f"No {label} evidence retrieved for section '{section_name}' after "
@@ -168,6 +181,29 @@ def retrieve_subsection_evidence(
     model_name: str | None = None,
 ) -> str:
     """Neutral EARLY/MIDDLE/LATE excerpts for a dynamic subsection upload."""
+    text, _, _ = retrieve_subsection_evidence_with_usage(
+        file_search_store_name=file_search_store_name,
+        subsection_key=subsection_key,
+        display_title=display_title,
+        source_filename=source_filename,
+        model_name=model_name,
+    )
+    return text
+
+
+def retrieve_subsection_evidence_with_usage(
+    file_search_store_name: str,
+    subsection_key: str,
+    display_title: str,
+    source_filename: str | None = None,
+    model_name: str | None = None,
+) -> tuple[str, object | None, float]:
+    """Same retrieval as retrieve_subsection_evidence, plus usage and latency.
+
+    Returns the excerpt string, that call's usage_metadata, and latency in
+    ms. Latency is the successful generate_content call only. Backoff sleep
+    is not included. The filter is always source_filename AND subsection_key.
+    """
     load_dotenv()
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
@@ -179,9 +215,7 @@ def retrieve_subsection_evidence(
             "Upload/reselect the PDF and try again."
         )
 
-    resolved_model = model_name or os.getenv(
-        "GEMINI_MODEL", DEFAULT_GEMINI_MODEL
-    )
+    resolved_model = resolve_model(None, model_name)
     client = genai.Client(api_key=api_key)
     sf = _escape_metadata_filter_value(source_filename)
     sk = _escape_metadata_filter_value(subsection_key)
@@ -208,7 +242,7 @@ def retrieve_subsection_evidence(
         metadata_filter=metadata_filter,
         top_k=DEFAULT_FILE_SEARCH_TOP_K,
     )
-    return _retrieve_with_no_evidence_retry(
+    text, response, latency_ms = _retrieve_with_no_evidence_retry(
         client,
         model=resolved_model,
         contents=prompt,
@@ -219,6 +253,7 @@ def retrieve_subsection_evidence(
         section_name=display_title,
         label="generic",
     )
+    return text, getattr(response, "usage_metadata", None), latency_ms
 
 
 def retrieve_query_chunks(
@@ -258,9 +293,7 @@ def retrieve_query_chunks_with_usage(
     if not api_key:
         raise RuntimeError("GEMINI_API_KEY is not set.")
 
-    resolved_model = model_name or os.getenv(
-        "GEMINI_MODEL", DEFAULT_GEMINI_MODEL
-    )
+    resolved_model = resolve_model(None, model_name)
     parts: list[str] = []
     if source_filename:
         sf = _escape_metadata_filter_value(source_filename)

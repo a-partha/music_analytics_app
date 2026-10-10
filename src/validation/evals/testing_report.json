@@ -1,0 +1,1684 @@
+{
+  "run_at": "2026-10-09T05:44:23+00:00",
+  "mode": "section_locked",
+  "models": {
+    "retrieval": "gemini-3.1-flash-lite",
+    "generator": "gemini-3.5-flash-lite",
+    "judge": "nvidia/nemotron-3-super-120b-a12b"
+  },
+  "summary": {
+    "total_queries": 25,
+    "cached_queries": 0,
+    "live_queries": 25,
+    "passed_queries": 14,
+    "pass_rate": 0.56,
+    "metric_passes": {
+      "Faithfulness": {
+        "passed": 25,
+        "scored": 25
+      },
+      "Answer Relevancy": {
+        "passed": 20,
+        "scored": 25
+      },
+      "Contextual Recall": {
+        "passed": 14,
+        "scored": 25
+      }
+    },
+    "manual_review": {
+      "reviewed": 25,
+      "unreviewed": 0,
+      "correct": 14,
+      "judge_agreement": 25
+    },
+    "generation_usage_missing": 0,
+    "latency": {
+      "retrieval": {
+        "mean_ms": 10051.22,
+        "median_ms": 6742.43,
+        "p95_ms": 27719.28,
+        "max_ms": 32587.35
+      },
+      "generation": {
+        "mean_ms": 7942.89,
+        "median_ms": 7524.39,
+        "p95_ms": 13540.43,
+        "max_ms": 13979.16
+      },
+      "pipeline": {
+        "mean_ms": 17994.12,
+        "median_ms": 15298.86,
+        "p95_ms": 33315.59,
+        "max_ms": 40115.51
+      },
+      "judge": {
+        "mean_ms": 16409.63,
+        "median_ms": 16105.99,
+        "p95_ms": 21101.02,
+        "max_ms": 23475.71
+      }
+    },
+    "mean_tokens": {
+      "retrieval_input": 6745.2,
+      "retrieval_output": 448.28,
+      "generation_input": 440.72,
+      "generation_output": 27.04,
+      "judge_input": 3908.8,
+      "judge_output": 703.92
+    },
+    "financials": {
+      "actual_run_spend_usd": 0.0797,
+      "cold_run_estimate_usd": 0.0797,
+      "judge_overhead_usd": 0.015737,
+      "pricing": "list-price estimate, not an invoice",
+      "pricing_models": {
+        "retrieval": "gemini-3.1-flash-lite",
+        "generator": "gemini-3.5-flash-lite",
+        "judge": "nvidia/nemotron-3-super-120b-a12b"
+      }
+    }
+  },
+  "results": [
+    {
+      "id": "consumption_metrics_01",
+      "question": "What was the global On-Demand Audio streaming volume change percentage in 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 4327.03,
+          "generation_ms": 13979.16,
+          "pipeline_ms": 18306.19,
+          "judge_api_ms": 15027.91
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 9760,
+            "output": 427,
+            "cost_usd": 0.00308
+          },
+          "generation_tokens": {
+            "input": 423,
+            "output": 22,
+            "cost_usd": 0.000182,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.003262
+        },
+        "judge_usage": {
+          "input_tokens": 4008,
+          "output_tokens": 609,
+          "total_tokens": 4617,
+          "cost_usd": 0.000595,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the answer is fully relevant and directly addresses the input question with no irrelevant statements, making it a perfect match.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the expected output sentence is fully supported by the first node in retrieval context, which explicitly states the same growth figure of +9.6% for Global On-Demand Audio streaming in 2025.",
+          "error": null
+        }
+      },
+      "ground_truth": "Global On-Demand Audio streaming grew by +9.6% in 2025.",
+      "retrieved_context": [
+        "Here are the excerpts and data points from the CONSUMPTION METRICS & VITAL STATS section:\n\n**EARLY**\n* Global On-Demand Audio Song Streams reached 4.7T in 2025, a +9.6% volume change.\n* U.S. Total Album Consumption (Album + TEA + SEA On-Demand Audio) was 1.138B in 2025, a +4.8% volume change.\n* U.S. On-Demand Audio Song Streams reached 1.4T in 2025, a +4.6% volume change.\n\n**MIDDLE**\n* 106K ISRCs were delivered to DSPs each day in 2025, a +7% increase over the 99K daily average in 2024.\n* 88% of tracks (or approx. 1 in 10) had 1K streams or less.\n* Tracks between 1M-50M Global audio streams make up 49.4% of all streaming.\n\n**LATE**\n* 43% of U.S. On-Demand Audio Streams are from tracks released in the last five years (2021-2025).\n* Rock (+6.4% year-over-year on-demand audio volume change), Christian/Gospel (+18.5%) and Latin (+5.2%) grew their share of the U.S. audio streaming pie the most in 2025.\n* U.S. vinyl sales increased for the 19th straight year, growing +8.6% to 47.9M."
+      ],
+      "answer": "The global On-Demand Audio streaming volume change percentage in 2025 was +9.6%."
+    },
+    {
+      "id": "consumption_metrics_02",
+      "question": "What was the volume change percentage for ex-U.S. On-Demand Audio song streams in 2025?",
+      "passed": false,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 4885.66,
+          "generation_ms": 7238.64,
+          "pipeline_ms": 12124.3,
+          "judge_api_ms": 14590.21
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 9760,
+            "output": 429,
+            "cost_usd": 0.003083
+          },
+          "generation_tokens": {
+            "input": 433,
+            "output": 34,
+            "cost_usd": 0.000215,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.003298
+        },
+        "judge_usage": {
+          "input_tokens": 3409,
+          "output_tokens": 702,
+          "total_tokens": 4111,
+          "cost_usd": 0.000589,
+          "api_calls": 8,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the output is fully relevant and contains no irrelevant statements, directly addressing the query about the volume change percentage for ex-U.S. On-Demand Audio song streams in 2025 with precision and focus.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the sentence in the expected output (sentence 1) cannot be attributed to any node in retrieval context, as no data supports the claimed Ex-U.S. On-Demand Audio song streams growth of +11.6% in 2025.",
+          "error": null
+        }
+      },
+      "ground_truth": "Ex-U.S. On-Demand Audio song streams grew by +11.6% in 2025.",
+      "retrieved_context": [
+        "Here are the excerpts and data points from the CONSUMPTION METRICS & VITAL STATS section:\n\n**EARLY**\n* Global On-Demand Audio Song Streams reached 4.7T in 2025, a +9.6% volume change.\n* U.S. Total Album Consumption (Album + TEA + SEA On-Demand Audio) was 1.138B in 2025, a +4.8% volume change.\n* U.S. On-Demand Audio Song Streams reached 1.4T in 2025, a +4.6% volume change.\n\n**MIDDLE**\n* 106K ISRCs were delivered to DSPs each day in 2025, a +7% increase over the 99K daily average in 2024.\n* 88% of tracks (or approx. 1 in 10) had 1K streams or less.\n* Tracks between 1M-50M Global audio streams make up 49.4% of all streaming.\n\n**LATE**\n* Rock (+6.4% year-over-year on-demand audio volume change), Christian/Gospel (+18.5%) and Latin (+5.2%) grew their share of the U.S. audio streaming pie the most in 2025.\n* U.S. vinyl sales increased for the 19th straight year, growing +8.6% to 47.9M.\n* Direct-to-Consumer sales now make up 13.6% of all physical albums sold, a +2.1 Share Percentage Point increase from 2024."
+      ],
+      "answer": "The provided context does not contain enough information to state the volume change percentage for ex-U.S. On-Demand Audio song streams in 2025."
+    },
+    {
+      "id": "consumption_metrics_03",
+      "question": "What was the total volume of U.S. total album consumption in 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 11810.78,
+          "generation_ms": 5633.74,
+          "pipeline_ms": 17444.52,
+          "judge_api_ms": 12336.4
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 9760,
+            "output": 429,
+            "cost_usd": 0.003083
+          },
+          "generation_tokens": {
+            "input": 427,
+            "output": 26,
+            "cost_usd": 0.000193,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.003277
+        },
+        "judge_usage": {
+          "input_tokens": 4052,
+          "output_tokens": 719,
+          "total_tokens": 4771,
+          "cost_usd": 0.000648,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, meaning the actual output fully aligns with the retrieval context and demonstrates perfect faithfulness.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the answer is fully relevant and contains no irrelevant statements, directly addressing the question about U.S. total album consumption volume in 2025 with complete focus and accuracy.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by the first node in retrieval context, which explicitly states the U.S. total album consumption was 1.138B in 2025.",
+          "error": null
+        }
+      },
+      "ground_truth": "The total volume of U.S. total album consumption was 1.138 billion in 2025.",
+      "retrieved_context": [
+        "Here are the excerpts and data points from the CONSUMPTION METRICS & VITAL STATS section:\n\n**EARLY**\n* Global On-Demand Audio Song Streams reached 4.7T in 2025, a +9.6% volume change.\n* U.S. Total Album Consumption (Album + TEA + SEA On-Demand Audio) was 1.138B in 2025, a +4.8% volume change.\n* U.S. On-Demand Audio Song Streams reached 1.4T in 2025, a +4.6% volume change.\n\n**MIDDLE**\n* 106K ISRCs were delivered to DSPs each day in 2025, a +7% increase over the 99K daily average in 2024.\n* 88% of tracks (or approx. 1 in 10) had 1K streams or less.\n* Tracks between 1M-50M Global audio streams make up 49.4% of all streaming.\n\n**LATE**\n* Rock (+6.4% year-over-year on-demand audio volume change), Christian/Gospel (+18.5%) and Latin (+5.2%) grew their share of the U.S. audio streaming pie the most in 2025.\n* U.S. vinyl sales increased for the 19th straight year, growing +8.6% to 47.9M.\n* Direct-to-Consumer sales now make up 13.6% of all physical albums sold, a +2.1 Share Percentage Point increase from 2024."
+      ],
+      "answer": "The total volume of U.S. total album consumption in 2025 was 1.138 billion."
+    },
+    {
+      "id": "consumption_metrics_04",
+      "question": "How many physical album sales (LP, CD and Cassette) occurred in Canada in 2025?",
+      "passed": false,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 27719.28,
+          "generation_ms": 5596.31,
+          "pipeline_ms": 33315.59,
+          "judge_api_ms": 10203.61
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 9760,
+            "output": 429,
+            "cost_usd": 0.003083
+          },
+          "generation_tokens": {
+            "input": 430,
+            "output": 25,
+            "cost_usd": 0.000191,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.003275
+        },
+        "judge_usage": {
+          "input_tokens": 3349,
+          "output_tokens": 641,
+          "total_tokens": 3990,
+          "cost_usd": 0.000556,
+          "api_calls": 8,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the output directly and accurately answers the question with no irrelevant statements, making it fully relevant and complete.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the expected output sentence about 3.8 million total physical album sales in Canada in 2025 cannot be attributed to any node in retrieval context, as the context contains only U.S.-focused data and no information about Canada or total physical album sales figures.",
+          "error": null
+        }
+      },
+      "ground_truth": "There were 3.8 million total physical album sales in Canada in 2025.",
+      "retrieved_context": [
+        "Here are the excerpts and data points from the CONSUMPTION METRICS & VITAL STATS section:\n\n**EARLY**\n* Global On-Demand Audio Song Streams reached 4.7T in 2025, a +9.6% volume change.\n* U.S. Total Album Consumption (Album + TEA + SEA On-Demand Audio) was 1.138B in 2025, a +4.8% volume change.\n* U.S. On-Demand Audio Song Streams reached 1.4T in 2025, a +4.6% volume change.\n\n**MIDDLE**\n* 106K ISRCs were delivered to DSPs each day in 2025, a +7% increase over the 99K daily average in 2024.\n* 88% of tracks (or approx. 1 in 10) had 1K streams or less.\n* Tracks between 1M-50M Global audio streams make up 49.4% of all streaming.\n\n**LATE**\n* Rock (+6.4% year-over-year on-demand audio volume change), Christian/Gospel (+18.5%) and Latin (+5.2%) grew their share of the U.S. audio streaming pie the most in 2025.\n* U.S. vinyl sales increased for the 19th straight year, growing +8.6% to 47.9M.\n* Direct-to-Consumer sales now make up 13.6% of all physical albums sold, a +2.1 Share Percentage Point increase from 2024."
+      ],
+      "answer": "The provided context does not contain enough information to answer how many physical album sales occurred in Canada in 2025."
+    },
+    {
+      "id": "vital_stats_01",
+      "question": "What was the average daily number of ISRCs delivered to DSPs in 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 4471.66,
+          "generation_ms": 7554.2,
+          "pipeline_ms": 12025.86,
+          "judge_api_ms": 21031.29
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 9760,
+            "output": 429,
+            "cost_usd": 0.003083
+          },
+          "generation_tokens": {
+            "input": 427,
+            "output": 27,
+            "cost_usd": 0.000196,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.003279
+        },
+        "judge_usage": {
+          "input_tokens": 4075,
+          "output_tokens": 741,
+          "total_tokens": 4816,
+          "cost_usd": 0.000659,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, meaning the actual output fully aligns with the retrieval context and demonstrates perfect faithfulness.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response is fully relevant, directly addressing the question about the average daily number of ISRCs delivered to DSPs in 2025 with no irrelevant statements.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by the 2nd node in retrieval context, which contains the exact information about 106K ISRCs delivered daily to DSPs in 2025.",
+          "error": null
+        }
+      },
+      "ground_truth": "An average of 106K ISRCs were delivered to DSPs each day in 2025.",
+      "retrieved_context": [
+        "Here are the excerpts and data points from the CONSUMPTION METRICS & VITAL STATS section:\n\n**EARLY**\n* Global On-Demand Audio Song Streams reached 4.7T in 2025, a +9.6% volume change.\n* U.S. Total Album Consumption (Album + TEA + SEA On-Demand Audio) was 1.138B in 2025, a +4.8% volume change.\n* U.S. On-Demand Audio Song Streams reached 1.4T in 2025, a +4.6% volume change.\n\n**MIDDLE**\n* 106K ISRCs were delivered to DSPs each day in 2025, a +7% increase over the 99K daily average in 2024.\n* 88% of tracks (or approx. 1 in 10) had 1K streams or less.\n* Tracks between 1M-50M Global audio streams make up 49.4% of all streaming.\n\n**LATE**\n* Rock (+6.4% year-over-year on-demand audio volume change), Christian/Gospel (+18.5%) and Latin (+5.2%) grew their share of the U.S. audio streaming pie the most in 2025.\n* U.S. vinyl sales increased for the 19th straight year, growing +8.6% to 47.9M.\n* Direct-to-Consumer sales now make up 13.6% of all physical albums sold, a +2.1 Share Percentage Point increase from 2024."
+      ],
+      "answer": "The average daily number of ISRCs delivered to DSPs in 2025 was 106,000."
+    },
+    {
+      "id": "vital_stats_02",
+      "question": "What percentage of all audio streaming tracks had 1K streams or less in 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 11201.71,
+          "generation_ms": 3979.99,
+          "pipeline_ms": 15181.7,
+          "judge_api_ms": 16105.99
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 9760,
+            "output": 429,
+            "cost_usd": 0.003083
+          },
+          "generation_tokens": {
+            "input": 428,
+            "output": 26,
+            "cost_usd": 0.000193,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.003277
+        },
+        "judge_usage": {
+          "input_tokens": 4042,
+          "output_tokens": 744,
+          "total_tokens": 4786,
+          "cost_usd": 0.000658,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, meaning the actual output fully aligns with the retrieval context and demonstrates perfect faithfulness.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response is fully relevant, directly addressing the question about audio streaming tracks with 1K streams or less in 2025, with no irrelevant statements present.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by the 2nd node in retrieval context, which states: '88% of tracks (or approx. 1 in 10) had 1K streams or less.'",
+          "error": null
+        }
+      },
+      "ground_truth": "In 2025, 88% of tracks had 1K streams or less.",
+      "retrieved_context": [
+        "Here are the excerpts and data points from the CONSUMPTION METRICS & VITAL STATS section:\n\n**EARLY**\n* Global On-Demand Audio Song Streams reached 4.7T in 2025, a +9.6% volume change.\n* U.S. Total Album Consumption (Album + TEA + SEA On-Demand Audio) was 1.138B in 2025, a +4.8% volume change.\n* U.S. On-Demand Audio Song Streams reached 1.4T in 2025, a +4.6% volume change.\n\n**MIDDLE**\n* 106K ISRCs were delivered to DSPs each day in 2025, a +7% increase over the 99K daily average in 2024.\n* 88% of tracks (or approx. 1 in 10) had 1K streams or less.\n* Tracks between 1M-50M Global audio streams make up 49.4% of all streaming.\n\n**LATE**\n* Rock (+6.4% year-over-year on-demand audio volume change), Christian/Gospel (+18.5%) and Latin (+5.2%) grew their share of the U.S. audio streaming pie the most in 2025.\n* U.S. vinyl sales increased for the 19th straight year, growing +8.6% to 47.9M.\n* Direct-to-Consumer sales now make up 13.6% of all physical albums sold, a +2.1 Share Percentage Point increase from 2024."
+      ],
+      "answer": "Based on the provided context, 88% of tracks had 1K streams or less in 2025."
+    },
+    {
+      "id": "vital_stats_03",
+      "question": "What percentage of U.S. On-Demand Audio streams came from songs released in the 2020s?",
+      "passed": false,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 4880.43,
+          "generation_ms": 6215.74,
+          "pipeline_ms": 11096.17,
+          "judge_api_ms": 21101.02
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 9760,
+            "output": 429,
+            "cost_usd": 0.003083
+          },
+          "generation_tokens": {
+            "input": 432,
+            "output": 37,
+            "cost_usd": 0.000222,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.003306
+        },
+        "judge_usage": {
+          "input_tokens": 4223,
+          "output_tokens": 836,
+          "total_tokens": 5059,
+          "cost_usd": 0.000714,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the output does not provide any relevant information to answer the question about the percentage of U.S. On-Demand Audio streams from 2020s songs, and instead states a lack of information, which fails to address the query directly.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the expected output's sentence about 47.9% of U.S. On-Demand Audio streams from 2020s songs cannot be attributed to any node in retrieval context, as none of the nodes (1st, 2nd, or 3rd) contain data on stream percentages by song release decade.",
+          "error": null
+        }
+      },
+      "ground_truth": "Nearly half, or 47.9%, of U.S. On-Demand Audio streams came from songs released in the 2020s.",
+      "retrieved_context": [
+        "Here are the excerpts and data points from the CONSUMPTION METRICS & VITAL STATS section:\n\n**EARLY**\n* Global On-Demand Audio Song Streams reached 4.7T in 2025, a +9.6% volume change.\n* U.S. Total Album Consumption (Album + TEA + SEA On-Demand Audio) was 1.138B in 2025, a +4.8% volume change.\n* U.S. On-Demand Audio Song Streams reached 1.4T in 2025, a +4.6% volume change.\n\n**MIDDLE**\n* 106K ISRCs were delivered to DSPs each day in 2025, a +7% increase over the 99K daily average in 2024.\n* 88% of tracks (or approx. 1 in 10) had 1K streams or less.\n* Tracks between 1M-50M Global audio streams make up 49.4% of all streaming.\n\n**LATE**\n* Rock (+6.4% year-over-year on-demand audio volume change), Christian/Gospel (+18.5%) and Latin (+5.2%) grew their share of the U.S. audio streaming pie the most in 2025.\n* U.S. vinyl sales increased for the 19th straight year, growing +8.6% to 47.9M.\n* Direct-to-Consumer sales now make up 13.6% of all physical albums sold, a +2.1 Share Percentage Point increase from 2024."
+      ],
+      "answer": "Based on the provided context, there is no information regarding the percentage of U.S. On-Demand Audio streams that came from songs released in the 2020s."
+    },
+    {
+      "id": "vital_stats_04",
+      "question": "How many consecutive years have U.S. vinyl sales increased as of 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 7393.27,
+          "generation_ms": 11306.11,
+          "pipeline_ms": 18699.38,
+          "judge_api_ms": 18760.94
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 9760,
+            "output": 429,
+            "cost_usd": 0.003083
+          },
+          "generation_tokens": {
+            "input": 427,
+            "output": 25,
+            "cost_usd": 0.000191,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.003274
+        },
+        "judge_usage": {
+          "input_tokens": 4030,
+          "output_tokens": 658,
+          "total_tokens": 4688,
+          "cost_usd": 0.000619,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the actual output is fully relevant and directly answers the question about consecutive years of U.S. vinyl sales increase as of 2025, with no irrelevant statements present.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by node 1 in retrieval context, which contains the exact information about U.S. vinyl sales increasing for the 19th straight year in 2025.",
+          "error": null
+        }
+      },
+      "ground_truth": "U.S. vinyl sales increased for the 19th straight year in 2025.",
+      "retrieved_context": [
+        "Here are the excerpts and data points from the CONSUMPTION METRICS & VITAL STATS section:\n\n**EARLY**\n* Global On-Demand Audio Song Streams reached 4.7T in 2025, a +9.6% volume change.\n* U.S. Total Album Consumption (Album + TEA + SEA On-Demand Audio) was 1.138B in 2025, a +4.8% volume change.\n* U.S. On-Demand Audio Song Streams reached 1.4T in 2025, a +4.6% volume change.\n\n**MIDDLE**\n* 106K ISRCs were delivered to DSPs each day in 2025, a +7% increase over the 99K daily average in 2024.\n* 88% of tracks (or approx. 1 in 10) had 1K streams or less.\n* Tracks between 1M-50M Global audio streams make up 49.4% of all streaming.\n\n**LATE**\n* Rock (+6.4% year-over-year on-demand audio volume change), Christian/Gospel (+18.5%) and Latin (+5.2%) grew their share of the U.S. audio streaming pie the most in 2025.\n* U.S. vinyl sales increased for the 19th straight year, growing +8.6% to 47.9M.\n* Direct-to-Consumer sales now make up 13.6% of all physical albums sold, a +2.1 Share Percentage Point increase from 2024."
+      ],
+      "answer": "As of 2025, U.S. vinyl sales have increased for the 19th straight year."
+    },
+    {
+      "id": "premium_pricing_01",
+      "question": "Which four territories accounted for nearly half of all global premium streams in 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 6742.43,
+          "generation_ms": 8556.43,
+          "pipeline_ms": 15298.86,
+          "judge_api_ms": 16873.03
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 3035,
+            "output": 434,
+            "cost_usd": 0.00141
+          },
+          "generation_tokens": {
+            "input": 422,
+            "output": 26,
+            "cost_usd": 0.000192,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.001601
+        },
+        "judge_usage": {
+          "input_tokens": 4040,
+          "output_tokens": 686,
+          "total_tokens": 4726,
+          "cost_usd": 0.000632,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output fully aligns with the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the output is fully relevant, contains no irrelevant statements, and directly addresses the input question with accurate and complete information.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by the first node in retrieval context, which directly states that nearly half (48.9%) of all Global Premium streams are from the U.S., Mexico, Brazil, and Germany.",
+          "error": null
+        }
+      },
+      "ground_truth": "The U.S., Mexico, Brazil, and Germany accounted for 48.9% of all Global Premium streams.",
+      "retrieved_context": [
+        "Here are the excerpts from the PREMIUM PRICING section:\n\n**EARLY**\n* \"Spotify and Amazon Music Unlimited both announced subscription price increases in 2025.\"\n* \"Since October 2022, these providers, along with Apple Music and YouTube Music, have all increased their monthly price, with Spotify making announcements each year since 2023.\"\n* \"Nearly half (48.9%) of all Global Premium streams are from just four territories: the U.S., Mexico, Brazil and Germany.\"\n\n**MIDDLE**\n* \"At a Regional level, Latin America (LATAM) is converting to Premium streams at the highest rate with Mexico setting the pace.\"\n* \"There were +50.9B Premium On-Demand streams this year in Mexico, demonstrating its global role as a Premium market driver.\"\n* \"Genres with strong listenership on DSP streaming services, such as R&B/Hip-Hop, Latin and Electronic Dance Music (EDM) also show the highest potential for converting nonsubscribers.\"\n\n**LATE**\n* \"41% This percentage of Jazz listeners cite 'high audio quality' as an extremely important feature, a rate 25% (+8 pts) higher than that from 'Non-Payers' (e.g., consumers who don't currently lay out for a DSP subscription) overall.\"\n* \"Audiences report steady Paid/Premium usage rates for Spotify over the last four years, while YouTube has gradually increased its Paid/Premium market penetration.\"\n* \"Paid streamers make up 42% of the U.S. general population yet account for 76% of all U.S. music spend (including physical music, live events and artist merch).\""
+      ],
+      "answer": "The four territories that accounted for nearly half of all global premium streams are the U.S., Mexico, Brazil, and Germany."
+    },
+    {
+      "id": "premium_pricing_02",
+      "question": "Which global region converts to premium streams at the highest rate?",
+      "passed": false,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 16267.23,
+          "generation_ms": 13540.43,
+          "pipeline_ms": 29807.66,
+          "judge_api_ms": 14511.6
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 3035,
+            "output": 440,
+            "cost_usd": 0.001419
+          },
+          "generation_tokens": {
+            "input": 421,
+            "output": 25,
+            "cost_usd": 0.000189,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.001608
+        },
+        "judge_usage": {
+          "input_tokens": 4065,
+          "output_tokens": 744,
+          "total_tokens": 4809,
+          "cost_usd": 0.00066,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output fully aligns with the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response is fully relevant and directly addresses the input question with no irrelevant statements, making it a perfect match in terms of answer relevancy.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the sentence about Latin America converting to premium streams at the highest rate is not supported by any part of the retrieval context. The context mentions Mexico and Brazil in relation to global premium streams (1st node) and Latin music as a genre with high conversion potential (2nd node), but it does not state that Latin America as a region is converting at the highest rate.",
+          "error": null
+        }
+      },
+      "ground_truth": "Latin America (LATAM) is converting to premium streams at the highest rate.",
+      "retrieved_context": [
+        "Here are the excerpts and data points from the PREMIUM PRICING section:\n\n**EARLY**\n* \"Spotify and Amazon Music Unlimited both announced subscription price increases in 2025.\"\n* \"Since October 2022, these providers, along with Apple Music and YouTube Music, have all increased their monthly price, with Spotify making announcements each year since 2023.\"\n* \"Nearly half (48.9%) of all Global Premium streams are from just four territories: the U.S., Mexico, Brazil and Germany.\"\n\n**MIDDLE**\n* \"There were +50.9B Premium On-Demand streams this year in Mexico, demonstrating its global role as a Premium market driver.\"\n* \"Genres with strong listenership on DSP streaming services, such as R&B/Hip-Hop, Latin and Electronic Dance Music (EDM) also show the highest potential for converting nonsubscribers.\"\n* \"41% This percentage of Jazz listeners cite 'high audio quality' as an extremely important feature, a rate 25% (+8 pts) higher than that from 'Non-Payers' (e.g., consumers who don't currently lay out for a DSP subscription) overall.\"\n\n**LATE**\n* \"Audiences report steady Paid/Premium usage rates for Spotify over the last four years, while YouTube has gradually increased its Paid/Premium market penetration.\"\n* \"Paid streamers make up 42% of the U.S. general population yet account for 76% of all U.S. music spend (including physical music, live events and artist merch).\"\n* \"Those who listen to Rock on a monthly basis are more often found on Apple Music, while those listening to Country are doing so on Amazon Music.\""
+      ],
+      "answer": "Based on the provided context, there is not enough information to determine which global region converts to premium streams at the highest rate."
+    },
+    {
+      "id": "premium_pricing_03",
+      "question": "What percentage of Japanese Gen Z were premium music streamers in 2025?",
+      "passed": false,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 4576.92,
+          "generation_ms": 6253.7,
+          "pipeline_ms": 10830.62,
+          "judge_api_ms": 13917.01
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 3035,
+            "output": 434,
+            "cost_usd": 0.00141
+          },
+          "generation_tokens": {
+            "input": 420,
+            "output": 29,
+            "cost_usd": 0.000199,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.001608
+        },
+        "judge_usage": {
+          "input_tokens": 3436,
+          "output_tokens": 636,
+          "total_tokens": 4072,
+          "cost_usd": 0.000561,
+          "api_calls": 8,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the response does not provide the requested percentage and instead states that the information is unavailable, making it completely irrelevant to the question.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the sentence about Japanese Gen Z premium music streamers at 42% in 2025 is not found in any of the retrieval context nodes.",
+          "error": null
+        }
+      },
+      "ground_truth": "The percentage of Japanese Gen Z who are premium music streamers rose to 42% in 2025.",
+      "retrieved_context": [
+        "Here are the excerpts from the PREMIUM PRICING section:\n\n**EARLY**\n* \"Spotify and Amazon Music Unlimited both announced subscription price increases in 2025.\"\n* \"Since October 2022, these providers, along with Apple Music and YouTube Music, have all increased their monthly price, with Spotify making announcements each year since 2023.\"\n* \"Nearly half (48.9%) of all Global Premium streams are from just four territories: the U.S., Mexico, Brazil and Germany.\"\n\n**MIDDLE**\n* \"At a Regional level, Latin America (LATAM) is converting to Premium streams at the highest rate with Mexico setting the pace.\"\n* \"There were +50.9B Premium On-Demand streams this year in Mexico, demonstrating its global role as a Premium market driver.\"\n* \"Genres with strong listenership on DSP streaming services, such as R&B/Hip-Hop, Latin and Electronic Dance Music (EDM) also show the highest potential for converting nonsubscribers.\"\n\n**LATE**\n* \"41% This percentage of Jazz listeners cite 'high audio quality' as an extremely important feature, a rate 25% (+8 pts) higher than that from 'Non-Payers' (e.g., consumers who don't currently lay out for a DSP subscription) overall.\"\n* \"Audiences report steady Paid/Premium usage rates for Spotify over the last four years, while YouTube has gradually increased its Paid/Premium market penetration.\"\n* \"Paid streamers make up 42% of the U.S. general population yet account for 76% of all U.S. music spend (including physical music, live events and artist merch).\""
+      ],
+      "answer": "Based on the provided context, there is no information regarding the percentage of Japanese Gen Z who were premium music streamers in 2025."
+    },
+    {
+      "id": "premium_pricing_04",
+      "question": "Which DSP streaming platform do monthly Rock listeners over-index on?",
+      "passed": false,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 4436.64,
+          "generation_ms": 11210.43,
+          "pipeline_ms": 15647.07,
+          "judge_api_ms": 19762.28
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 3035,
+            "output": 438,
+            "cost_usd": 0.001416
+          },
+          "generation_tokens": {
+            "input": 420,
+            "output": 23,
+            "cost_usd": 0.000184,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.001599
+        },
+        "judge_usage": {
+          "input_tokens": 3363,
+          "output_tokens": 652,
+          "total_tokens": 4015,
+          "cost_usd": 0.000562,
+          "api_calls": 8,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the actual output does not provide any relevant information about the DSP streaming platform that monthly Rock listeners over-index on, and the only statement given highlights a lack of information, making it completely irrelevant to the question.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the sentence 'Monthly Rock listeners over-index on Apple Music.' cannot be attributed to any part of the retrieval context, which contains no mention of Rock listeners, Apple Music, or over-indexing behavior.",
+          "error": null
+        }
+      },
+      "ground_truth": "Monthly Rock listeners over-index on Apple Music.",
+      "retrieved_context": [
+        "Here are the excerpts and data points from the PREMIUM PRICING section:\n\n**EARLY**\n* \"Spotify and Amazon Music Unlimited both announced subscription price increases in 2025.\"\n* \"Since October 2022, these providers, along with Apple Music and YouTube Music, have all increased their monthly price, with Spotify making announcements each year since 2023.\"\n* \"Nearly half (48.9%) of all Global Premium streams are from just four territories: the U.S., Mexico, Brazil and Germany.\"\n\n**MIDDLE**\n* \"There were +50.9B Premium On-Demand streams this year in Mexico, demonstrating its global role as a Premium market driver.\"\n* \"In Premium rankings, Japan ranks #5 in Premium volume, up +10.3% vs last year.\"\n* \"Notably, the percentage of Japanese Gen Z who are Premium music streamers has risen to 42%, up from 36% in 2023.\"\n\n**LATE**\n* \"Genres with strong listenership on DSP streaming services, such as R&B/Hip-Hop, Latin and Electronic Dance Music (EDM) also show the highest potential for converting nonsubscribers.\"\n* \"41% This percentage of Jazz listeners cite 'high audio quality' as an extremely important feature, a rate 25% (+8 pts) higher than that from 'Non-Payers' (e.g., consumers who don't currently lay out for a DSP subscription) overall.\"\n* \"Paid streamers make up 42% of the U.S. general population yet account for 76% of all U.S. music spend (including physical music, live events and artist merch).\""
+      ],
+      "answer": "Based on the provided context, there is no information about which DSP streaming platform monthly Rock listeners over-index on."
+    },
+    {
+      "id": "welcome_to_transmedia_01",
+      "question": "Which music documentary ranked first in minutes watched in 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 6646.94,
+          "generation_ms": 5680.6,
+          "pipeline_ms": 12327.54,
+          "judge_api_ms": 13426.86
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 4646,
+            "output": 512,
+            "cost_usd": 0.00193
+          },
+          "generation_tokens": {
+            "input": 497,
+            "output": 17,
+            "cost_usd": 0.000192,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.002121
+        },
+        "judge_usage": {
+          "input_tokens": 4195,
+          "output_tokens": 720,
+          "total_tokens": 4915,
+          "cost_usd": 0.00066,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the answer is fully relevant, directly addressing the question with no irrelevant statements, making it a perfect match.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by the 1st node in retrieval context, which directly matches the statement.",
+          "error": null
+        }
+      },
+      "ground_truth": "Becoming Led Zeppelin ranked number one in minutes watched in 2025.",
+      "retrieved_context": [
+        "Here are excerpts and data points from the \"WELCOME TO TRANSMEDIA\" section:\n\n**EARLY**\n* \"Transmedia - the convergence and expansion of content across different media types, such as music, gaming, film and television - is critical for navigating the modern connected world.\"\n* \"Crucially, established music artists act as powerful audience drivers, leveraging loyal fan bases to bring immediate, engaged viewership to the various initiatives with which they're involved...\"\n* \"Becoming Led Zeppelin ranks #1 in minutes watched, driving the iconic rock band's Global On-Demand Audio streams to their highest-ever weekly peak at the time: 40.4M for the week ending 2/27/25.\"\n\n**MIDDLE**\n* \"Thirty-one music documentaries premiered in 2025 across all platforms, which was -30% vs 2024.\"\n* \"Music films from Taylor Swift, Depeche Mode and David Gilmour all debuted in brick-and-mortar theaters in the second half of 2025...\"\n* \"Taylor Swift: The Official Release Party of a Showgirl (distributed through AMC Theaters in October) claimed $34M at the U.S. box office when it was released to theaters.\"\n\n**LATE**\n* \"The release of Netflix's KPop Demon Hunters on June 20, 2025, had a seismic impact in both the U.S. and ex-U.S. territories for music consumption.\"\n* \"Hit single 'Golden' [from KPop Demon Hunters] spending eight weeks at #1 on the Billboard Hot 100 and a record 20 weeks at #1 on the Billboard Global Excl. U.S. chart (through charts dated Jan. 10, 2026).\"\n* \"Ariana Grande reprised her role as Glinda in Wicked: For Good, which was released in theaters on Nov. 21, 2025, to a resounding $147M in gross U.S. box office revenue its first weekend.\""
+      ],
+      "answer": "Based on the provided context, *Becoming Led Zeppelin* ranked first in minutes watched."
+    },
+    {
+      "id": "welcome_to_transmedia_02",
+      "question": "How much did the Taylor Swift movie gross at the U.S. box office during its release?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 4864.38,
+          "generation_ms": 7277.24,
+          "pipeline_ms": 12141.62,
+          "judge_api_ms": 13594.17
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 4646,
+            "output": 512,
+            "cost_usd": 0.00193
+          },
+          "generation_tokens": {
+            "input": 502,
+            "output": 25,
+            "cost_usd": 0.000213,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.002143
+        },
+        "judge_usage": {
+          "input_tokens": 4282,
+          "output_tokens": 747,
+          "total_tokens": 5029,
+          "cost_usd": 0.000679,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response is fully relevant and contains no irrelevant statements, directly addressing the question about the Taylor Swift movie's U.S. box office gross.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by the 2nd node in retrieval context, which contains the exact same information.",
+          "error": null
+        }
+      },
+      "ground_truth": "Taylor Swift: The Official Release Party of a Showgirl claimed $34M at the U.S. box office.",
+      "retrieved_context": [
+        "Here are excerpts and data points from the \"WELCOME TO TRANSMEDIA\" section:\n\n**EARLY**\n* \"Transmedia - the convergence and expansion of content across different media types, such as music, gaming, film and television - is critical for navigating the modern connected world.\"\n* \"Crucially, established music artists act as powerful audience drivers, leveraging loyal fan bases to bring immediate, engaged viewership to the various initiatives with which they're involved...\"\n* \"Becoming Led Zeppelin ranks #1 in minutes watched, driving the iconic rock band's Global On-Demand Audio streams to their highest-ever weekly peak at the time: 40.4M for the week ending 2/27/25.\"\n\n**MIDDLE**\n* \"Thirty-one music documentaries premiered in 2025 across all platforms, which was -30% vs 2024.\"\n* \"Music films from Taylor Swift, Depeche Mode and David Gilmour all debuted in brick-and-mortar theaters in the second half of 2025...\"\n* \"Taylor Swift: The Official Release Party of a Showgirl (distributed through AMC Theaters in October) claimed $34M at the U.S. box office when it was released to theaters.\"\n\n**LATE**\n* \"The release of Netflix's KPop Demon Hunters on June 20, 2025, had a seismic impact in both the U.S. and ex-U.S. territories for music consumption.\"\n* \"Hit single 'Golden' [from KPop Demon Hunters] spending eight weeks at #1 on the Billboard Hot 100 and a record 20 weeks at #1 on the Billboard Global Excl. U.S. chart (through charts dated Jan. 10, 2026).\"\n* \"Ariana Grande reprised her role as Glinda in Wicked: For Good, which was released in theaters on Nov. 21, 2025, to a resounding $147M in gross U.S. box office revenue its first weekend.\""
+      ],
+      "answer": "The Taylor Swift movie grossed $34M at the U.S. box office when it was released to theaters."
+    },
+    {
+      "id": "welcome_to_transmedia_03",
+      "question": "What soundtrack became the first official soundtrack to hit number one on the Billboard 200 since Encanto?",
+      "passed": false,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 4644.09,
+          "generation_ms": 7604.9,
+          "pipeline_ms": 12248.99,
+          "judge_api_ms": 14540.94
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 4646,
+            "output": 512,
+            "cost_usd": 0.00193
+          },
+          "generation_tokens": {
+            "input": 504,
+            "output": 33,
+            "cost_usd": 0.000234,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.002163
+        },
+        "judge_usage": {
+          "input_tokens": 3626,
+          "output_tokens": 798,
+          "total_tokens": 4424,
+          "cost_usd": 0.000649,
+          "api_calls": 8,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output fully aligns with the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the actual output does not address the question at all\u2014it states that no information is mentioned in the context, which fails to provide any relevant answer about which soundtrack hit number one on the Billboard 200 since Encanto, making the response entirely irrelevant.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the expected output's claim about Netflix's KPop Demon Hunters being the first official soundtrack to hit #1 on the Billboard 200 since Encanto is not supported by any information in the retrieval context, which only references the soundtrack's single 'Golden' achieving chart success on the Billboard Hot 100 and Billboard Global Excl. U.S. chart, with no mention of the Billboard 200 or a comparison to Encanto.",
+          "error": null
+        }
+      },
+      "ground_truth": "Netflix's KPop Demon Hunters became the first official soundtrack to hit #1 on the Billboard 200 since Encanto.",
+      "retrieved_context": [
+        "Here are excerpts and data points from the \"WELCOME TO TRANSMEDIA\" section:\n\n**EARLY**\n* \"Transmedia - the convergence and expansion of content across different media types, such as music, gaming, film and television - is critical for navigating the modern connected world.\"\n* \"Crucially, established music artists act as powerful audience drivers, leveraging loyal fan bases to bring immediate, engaged viewership to the various initiatives with which they're involved...\"\n* \"Becoming Led Zeppelin ranks #1 in minutes watched, driving the iconic rock band's Global On-Demand Audio streams to their highest-ever weekly peak at the time: 40.4M for the week ending 2/27/25.\"\n\n**MIDDLE**\n* \"Thirty-one music documentaries premiered in 2025 across all platforms, which was -30% vs 2024.\"\n* \"Music films from Taylor Swift, Depeche Mode and David Gilmour all debuted in brick-and-mortar theaters in the second half of 2025...\"\n* \"Taylor Swift: The Official Release Party of a Showgirl (distributed through AMC Theaters in October) claimed $34M at the U.S. box office when it was released to theaters.\"\n\n**LATE**\n* \"The release of Netflix's KPop Demon Hunters on June 20, 2025, had a seismic impact in both the U.S. and ex-U.S. territories for music consumption.\"\n* \"Hit single 'Golden' [from KPop Demon Hunters] spending eight weeks at #1 on the Billboard Hot 100 and a record 20 weeks at #1 on the Billboard Global Excl. U.S. chart (through charts dated Jan. 10, 2026).\"\n* \"Ariana Grande reprised her role as Glinda in Wicked: For Good, which was released in theaters on Nov. 21, 2025, to a resounding $147M in gross U.S. box office revenue its first weekend.\""
+      ],
+      "answer": "Based on the provided context, there is no mention of what soundtrack became the first official soundtrack to hit number one on the Billboard 200 since Encanto."
+    },
+    {
+      "id": "welcome_to_transmedia_04",
+      "question": "How many global interactive streams did the Daft Punk Experience on Fortnite generate in its first week?",
+      "passed": false,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 27483.63,
+          "generation_ms": 4001.04,
+          "pipeline_ms": 31484.67,
+          "judge_api_ms": 16792.05
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 4646,
+            "output": 383,
+            "cost_usd": 0.001736
+          },
+          "generation_tokens": {
+            "input": 387,
+            "output": 28,
+            "cost_usd": 0.000186,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.001922
+        },
+        "judge_usage": {
+          "input_tokens": 3316,
+          "output_tokens": 587,
+          "total_tokens": 3903,
+          "cost_usd": 0.000529,
+          "api_calls": 8,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output fully aligns with the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the output is fully relevant and directly addresses the input question with no irrelevant statements, making it a perfect match in terms of answer relevancy.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the sentence about the Daft Punk Experience campaign generating 1.1 million Global Interactive Streams is not mentioned in any part of the retrieval context.",
+          "error": null
+        }
+      },
+      "ground_truth": "The Daft Punk Experience campaign generated 1.1 million Global Interactive Streams in its first week.",
+      "retrieved_context": [
+        "Here are the excerpts from the \"WELCOME TO TRANSMEDIA\" section:\n\n**EARLY**\n* \"Transmedia - the convergence and expansion of content across different media types, such as music, gaming, film and television - is critical for navigating the modern connected world.\"\n* \"Crucially, established music artists act as powerful audience drivers, leveraging loyal fan bases to bring immediate, engaged viewership to the various initiatives with which they're involved, from film and TV properties to commercial brands.\"\n\n**MIDDLE**\n* \"Music films from Taylor Swift, Depeche Mode and David Gilmour all debuted in brick-and-mortar theaters in the second half of 2025, while KPop Demon Hunters also made a limited time jump from Netflix to the silver screen this fall.\"\n* \"Ariana Grande reprised her role as Glinda in Wicked: For Good, which was released in theaters on Nov. 21, 2025, to a resounding $147M in gross U.S. box office revenue its first weekend.\"\n\n**LATE**\n* \"The release of Netflix's KPop Demon Hunters on June 20, 2025, had a seismic impact in both the U.S. and ex-U.S. territories for music consumption.\"\n* \"As the film and soundtrack for KPop Demon Hunters began resonating globally, versions of 'Golden' were released in different languages to connect with new listeners.\"\n* \"The Spanish version attracts streams from Latin America, while the French version draws streams from neighboring European territories.\""
+      ],
+      "answer": "The provided context does not contain enough information to answer how many global interactive streams the Daft Punk Experience on Fortnite generated in its first week."
+    },
+    {
+      "id": "evolving_fandom_01",
+      "question": "Which country moved up in the 2025 Global Export Power Rankings due to its Latin music exports?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 14193.34,
+          "generation_ms": 7382.35,
+          "pipeline_ms": 21575.69,
+          "judge_api_ms": 23475.71
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 6380,
+            "output": 446,
+            "cost_usd": 0.002264
+          },
+          "generation_tokens": {
+            "input": 432,
+            "output": 23,
+            "cost_usd": 0.000187,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.002451
+        },
+        "judge_usage": {
+          "input_tokens": 3972,
+          "output_tokens": 653,
+          "total_tokens": 4625,
+          "cost_usd": 0.000612,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the output is fully relevant, directly addressing the question about which country moved up in the 2025 Global Export Power Rankings due to Latin music exports, with no irrelevant statements present.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by the 1st node in retrieval context, which explicitly states that Brazil moved up in export power rankings due to strengths in Latin music export.",
+          "error": null
+        }
+      },
+      "ground_truth": "Brazil moved up in the export power rankings due to strengths in Latin music export.",
+      "retrieved_context": [
+        "Here are excerpts and data points from the \"EVOLVING FANDOM\" section:\n\n**EARLY**\n* \"In Luminate's most recent audience response data, 20% of U.S. music listeners are considered superfans, meaning they engage with artists and music in 5 or more ways.\"\n* \"K-pop, where more than 1 in 3 listeners are categorized as a superfan, does very well at facilitating conversions throughout the entire journey.\"\n* \"For instance, for those that want to move a casual fan to an active one, consider a limited time value-priced merch item to initiate the financial relationship.\"\n\n**MIDDLE**\n* \"In the U.S. and Japan, the purchase of physical music and merch rank in the Top 5 activities among superfans. In India, there is an emphasis on buying digital music.\"\n* \"U.S. superfans are +33% more likely to listen to artists from outside their own market when compared with the average U.S. music listener.\"\n* \"Japanese superfans are +35% more likely to listen to artists from outside their own market when compared with the average Japan music listener.\"\n\n**LATE**\n* \"Luminate Export Power Rankings evaluate a country's ability to export recorded music globally. This score is a combination of four data points...\"\n* \"While the Top 10 countries in export power remain the same since 2024, Brazil moves up due to strengths in Latin music export.\"\n* \"While not in the Top 10, Nigeria has increased its ranking from #23 in 2024 to #19 in 2025 as artists like Burna Boy and Ayra Starr connect with global audiences.\""
+      ],
+      "answer": "Based on the provided context, Brazil moved up in the export power rankings due to its strengths in Latin music export."
+    },
+    {
+      "id": "evolving_fandom_02",
+      "question": "What percentage of Total On-Demand streams in Brazil come from local Brazilian artists?",
+      "passed": false,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 4708.23,
+          "generation_ms": 8564.52,
+          "pipeline_ms": 13272.75,
+          "judge_api_ms": 20966.27
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 6380,
+            "output": 523,
+            "cost_usd": 0.002379
+          },
+          "generation_tokens": {
+            "input": 503,
+            "output": 28,
+            "cost_usd": 0.000221,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.0026
+        },
+        "judge_usage": {
+          "input_tokens": 4268,
+          "output_tokens": 771,
+          "total_tokens": 5039,
+          "cost_usd": 0.000688,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the actual output does not provide the requested percentage of Total On-Demand streams in Brazil from local Brazilian artists, instead stating a lack of information, which fails to address the input question entirely.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the sentence about Brazil's 75.2% of Total On-Demand streams from local artists is not found in any of the three nodes (1st, 2nd, or 3rd) in the retrieval context, which discuss superfan engagement, market differences, and global export power rankings without mentioning Brazil's streaming share or local artist dominance.",
+          "error": null
+        }
+      },
+      "ground_truth": "In Brazil, 75.2% of Total On-Demand streams come from a local Brazilian artist.",
+      "retrieved_context": [
+        "Here are excerpts and data points from the \"EVOLVING FANDOM\" section, categorized as requested:\n\n**EARLY**\n*   \"In Luminate's most recent audience response data, 20% of U.S. music listeners are considered superfans, meaning they engage with artists and music in 5 or more ways.\"\n*   \"U.S. Fan Engagement Funnel: Converting Music Listener to Superfan... Casual Fan: Uses free/ad-supported or programmed streaming services... Active Fan: Paid DSP user OR casual fan (above) who purchases physical media.\"\n*   \"Pop music is slightly better at converting engaged fans to superfans than Country. K-pop, where more than 1 in 3 listeners are categorized as a superfan, does very well at facilitating conversions throughout the entire journey.\"\n\n**MIDDLE**\n*   \"Superfandom can look different depending on the audience and market. For instance, in the U.S. and Japan, the purchase of physical music and merch rank in the Top 5 activities among superfans. In India, there is an emphasis on buying digital music.\"\n*   \"U.S. superfans are +33% more likely to listen to artists from outside their own market when compared with the average U.S. music listener.\"\n*   \"Japanese superfans are +35% more likely to listen to artists from outside their own market when compared with the average Japan music listener.\"\n\n**LATE**\n*   \"Global Export Power Rankings evaluate a country's ability to export recorded music globally. This score is a combination of four data points: the rank of artists in each country based on Total On-Demand Streaming and Country of Origin...\"\n*   \"While the Top 10 countries in export power remain the same since 2024, Brazil moves up due to strengths in Latin music export.\"\n*   \"While not in the Top 10, Nigeria has increased its ranking from #23 in 2024 to #19 in 2025 as artists like Burna Boy and Ayra Starr connect with global audiences.\""
+      ],
+      "answer": "Based on the provided context, there is no information about the percentage of Total On-Demand streams in Brazil that come from local Brazilian artists."
+    },
+    {
+      "id": "evolving_fandom_03",
+      "question": "What percentage of U.S. music listeners are categorized as superfans in 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 10836.8,
+          "generation_ms": 10382.44,
+          "pipeline_ms": 21219.24,
+          "judge_api_ms": 14945.16
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 6380,
+            "output": 523,
+            "cost_usd": 0.002379
+          },
+          "generation_tokens": {
+            "input": 508,
+            "output": 22,
+            "cost_usd": 0.000207,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.002587
+        },
+        "judge_usage": {
+          "input_tokens": 4144,
+          "output_tokens": 609,
+          "total_tokens": 4753,
+          "cost_usd": 0.000606,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response is fully relevant, directly addressing the question about the percentage of U.S. music listeners categorized as superfans in 2025 with no irrelevant statements.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by node 1 in retrieval context, which directly states that 20% of U.S. music listeners are considered superfans.",
+          "error": null
+        }
+      },
+      "ground_truth": "In 2025, 20% of U.S. music listeners are considered superfans.",
+      "retrieved_context": [
+        "Here are excerpts and data points from the \"EVOLVING FANDOM\" section, categorized as requested:\n\n**EARLY**\n*   \"In Luminate's most recent audience response data, 20% of U.S. music listeners are considered superfans, meaning they engage with artists and music in 5 or more ways.\"\n*   \"U.S. Fan Engagement Funnel: Converting Music Listener to Superfan... Casual Fan: Uses free/ad-supported or programmed streaming services... Active Fan: Paid DSP user OR casual fan (above) who purchases physical media.\"\n*   \"Pop music is slightly better at converting engaged fans to superfans than Country. K-pop, where more than 1 in 3 listeners are categorized as a superfan, does very well at facilitating conversions throughout the entire journey.\"\n\n**MIDDLE**\n*   \"Superfandom can look different depending on the audience and market. For instance, in the U.S. and Japan, the purchase of physical music and merch rank in the Top 5 activities among superfans. In India, there is an emphasis on buying digital music.\"\n*   \"U.S. superfans are +33% more likely to listen to artists from outside their own market when compared with the average U.S. music listener.\"\n*   \"Japanese superfans are +35% more likely to listen to artists from outside their own market when compared with the average Japan music listener.\"\n\n**LATE**\n*   \"Global Export Power Rankings evaluate a country's ability to export recorded music globally. This score is a combination of four data points: the rank of artists in each country based on Total On-Demand Streaming and Country of Origin...\"\n*   \"While the Top 10 countries in export power remain the same since 2024, Brazil moves up due to strengths in Latin music export.\"\n*   \"While not in the Top 10, Nigeria has increased its ranking from #23 in 2024 to #19 in 2025 as artists like Burna Boy and Ayra Starr connect with global audiences.\""
+      ],
+      "answer": "Based on the provided context, 20% of U.S. music listeners are considered superfans."
+    },
+    {
+      "id": "ai_artists_01",
+      "question": "What was the reported advance given to the creator of the AI artist Xania Monet?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 6002.47,
+          "generation_ms": 7592.74,
+          "pipeline_ms": 13595.21,
+          "judge_api_ms": 16025.69
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 2145,
+            "output": 459,
+            "cost_usd": 0.001225
+          },
+          "generation_tokens": {
+            "input": 449,
+            "output": 19,
+            "cost_usd": 0.000182,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.001407
+        },
+        "judge_usage": {
+          "input_tokens": 4063,
+          "output_tokens": 733,
+          "total_tokens": 4796,
+          "cost_usd": 0.000655,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response is fully relevant and directly addresses the input question with no irrelevant statements, making it a perfect match in terms of answer relevancy.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by the first node in retrieval context, which explicitly states that Telisha 'Nikki' Jones, the creator of Xania Monet, received a reported $3M advance.",
+          "error": null
+        }
+      },
+      "ground_truth": "The creator of Xania Monet received a reported $3 million advance.",
+      "retrieved_context": [
+        "Here are the excerpts from the AI ARTISTS section:\n\n**EARLY**\n* \"The second half of 2025 was marked by the emergence of several high-profile Al artists.\"\n* \"The Velvet Sundown, Breaking Rust and Cain Walker all made headlines, but Xania Monet made news for not only streaming numbers and chart rankings but the reported $3M advance the Mississippi poet creator, Telisha 'Nikki' Jones, received.\"\n* \"Proponents argue that Al artists can appear in different places at once, never get tired and can perform in multiple projects simultaneously.\"\n\n**MIDDLE**\n* \"It's worth noting that only Xania Monet hit the Top 97th percentile of U.S. artists, and the decline of U.S. digital song sales means it doesn't take as many to reach the height of those charts than it used to.\"\n* \"Breaking Rust topped the Billboard Country Digital Song Sales chart in week 44 2025 (week ending 11/6/25) with 2.5K sales of 'Walk My Walk.'\"\n* \"Millennials are the most comfortable with generative Al's use in music, with 36% expressing comfortability with Al's use in song lyrics.\"\n\n**LATE**\n* \"The greatest reticence toward Al's use in music is among 18-24-year-olds (21% comfortable), consumers aged 45 or older (22%) and women across generations (23%).\"\n* \"While roughly a quarter to a third of U.S. music listeners are comfortable with various song elements being created with Al, a much larger share are either uncomfortable or indifferent.\"\n* \"44% of music listeners say they would be less interested in listening to music if they knew it was produced using generative Al.\""
+      ],
+      "answer": "The reported advance given to the creator of the AI artist Xania Monet was $3 million."
+    },
+    {
+      "id": "ai_artists_02",
+      "question": "Which AI artist was the only one to reach the Top 97th percentile of U.S. artists in 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 32587.35,
+          "generation_ms": 7528.16,
+          "pipeline_ms": 40115.51,
+          "judge_api_ms": 19664.78
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 2145,
+            "output": 459,
+            "cost_usd": 0.001225
+          },
+          "generation_tokens": {
+            "input": 461,
+            "output": 30,
+            "cost_usd": 0.000213,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.001438
+        },
+        "judge_usage": {
+          "input_tokens": 4146,
+          "output_tokens": 754,
+          "total_tokens": 4900,
+          "cost_usd": 0.000671,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the output is fully relevant, directly addressing the question about the AI artist who reached the Top 97th percentile of U.S. artists in 2025 with no irrelevant statements, making it a precise and accurate response.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by the 2nd bullet point in the MIDDLE node in retrieval context.",
+          "error": null
+        }
+      },
+      "ground_truth": "Xania Monet was the only AI artist to hit the Top 97th percentile of U.S. artists.",
+      "retrieved_context": [
+        "Here are the excerpts from the AI ARTISTS section:\n\n**EARLY**\n* \"The second half of 2025 was marked by the emergence of several high-profile Al artists.\"\n* \"The Velvet Sundown, Breaking Rust and Cain Walker all made headlines, but Xania Monet made news for not only streaming numbers and chart rankings but the reported $3M advance the Mississippi poet creator, Telisha 'Nikki' Jones, received.\"\n* \"Proponents argue that Al artists can appear in different places at once, never get tired and can perform in multiple projects simultaneously.\"\n\n**MIDDLE**\n* \"It's worth noting that only Xania Monet hit the Top 97th percentile of U.S. artists, and the decline of U.S. digital song sales means it doesn't take as many to reach the height of those charts than it used to.\"\n* \"Breaking Rust topped the Billboard Country Digital Song Sales chart in week 44 2025 (week ending 11/6/25) with 2.5K sales of 'Walk My Walk.'\"\n* \"Millennials are the most comfortable with generative Al's use in music, with 36% expressing comfortability with Al's use in song lyrics.\"\n\n**LATE**\n* \"The greatest reticence toward Al's use in music is among 18-24-year-olds (21% comfortable), consumers aged 45 or older (22%) and women across generations (23%).\"\n* \"While roughly a quarter to a third of U.S. music listeners are comfortable with various song elements being created with Al, a much larger share are either uncomfortable or indifferent.\"\n* \"29% of music listeners say they would be less interested in listening to music if they knew it was produced using generative Al.\""
+      ],
+      "answer": "Xania Monet was the only AI artist to reach the Top 97th percentile of U.S. artists in 2025."
+    },
+    {
+      "id": "ai_artists_03",
+      "question": "What percentage of music listeners would be less interested in music if they knew it was produced using generative AI?",
+      "passed": false,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 7561.55,
+          "generation_ms": 4973.25,
+          "pipeline_ms": 12534.8,
+          "judge_api_ms": 17462.82
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 2145,
+            "output": 459,
+            "cost_usd": 0.001225
+          },
+          "generation_tokens": {
+            "input": 453,
+            "output": 33,
+            "cost_usd": 0.000218,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.001443
+        },
+        "judge_usage": {
+          "input_tokens": 4252,
+          "output_tokens": 802,
+          "total_tokens": 5054,
+          "cost_usd": 0.000701,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output fully aligns with the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response is fully relevant, directly addressing the question about music listeners' interest in AI-generated music with no irrelevant statements, making it a precise and on-target answer.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because the expected output sentence (sentence 1) contains a percentage (44%) that does not match any value in the retrieval context, and no node in retrieval context provides a matching figure, making attribution impossible.",
+          "error": null
+        }
+      },
+      "ground_truth": "44% of music listeners say they would be less interested in listening to music if they knew it was produced using generative AI.",
+      "retrieved_context": [
+        "Here are the excerpts from the AI ARTISTS section:\n\n**EARLY**\n* \"The second half of 2025 was marked by the emergence of several high-profile Al artists.\"\n* \"The Velvet Sundown, Breaking Rust and Cain Walker all made headlines, but Xania Monet made news for not only streaming numbers and chart rankings but the reported $3M advance the Mississippi poet creator, Telisha 'Nikki' Jones, received.\"\n* \"Proponents argue that Al artists can appear in different places at once, never get tired and can perform in multiple projects simultaneously.\"\n\n**MIDDLE**\n* \"It's worth noting that only Xania Monet hit the Top 97th percentile of U.S. artists, and the decline of U.S. digital song sales means it doesn't take as many to reach the height of those charts than it used to.\"\n* \"Breaking Rust topped the Billboard Country Digital Song Sales chart in week 44 2025 (week ending 11/6/25) with 2.5K sales of 'Walk My Walk.'\"\n* \"Millennials are the most comfortable with generative Al's use in music, with 36% expressing comfortability with Al's use in song lyrics.\"\n\n**LATE**\n* \"The greatest reticence toward Al's use in music is among 18-24-year-olds (21% comfortable), consumers aged 45 or older (22%) and women across generations (23%).\"\n* \"While roughly a quarter to a third of U.S. music listeners are comfortable with various song elements being created with Al, a much larger share are either uncomfortable or indifferent.\"\n* \"29% of music listeners say they would be less interested in listening to music if they knew it was produced using generative Al.\""
+      ],
+      "answer": "Based on the provided context, 29% of music listeners say they would be less interested in listening to music if they knew it was produced using generative AI."
+    },
+    {
+      "id": "year_end_charts_01",
+      "question": "Which song was ranked first globally for On-Demand Audio streams in 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 8043.3,
+          "generation_ms": 13145.73,
+          "pipeline_ms": 21189.03,
+          "judge_api_ms": 16113.56
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 11417,
+            "output": 417,
+            "cost_usd": 0.00348
+          },
+          "generation_tokens": {
+            "input": 407,
+            "output": 25,
+            "cost_usd": 0.000185,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.003664
+        },
+        "judge_usage": {
+          "input_tokens": 3976,
+          "output_tokens": 648,
+          "total_tokens": 4624,
+          "cost_usd": 0.00061,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output is fully faithful to the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the answer is fully relevant and directly addresses the question with no irrelevant statements, making it a perfect match.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence in the expected output is fully supported by the first node in retrieval context, which contains the exact information about the song, artists, and stream count.",
+          "error": null
+        }
+      },
+      "ground_truth": "'Die With A Smile' by Lady Gaga & Bruno Mars was ranked number one with 2.858 billion streams.",
+      "retrieved_context": [
+        "Here are excerpts and data points from the YEAR-END CHARTS section:\n\n**EARLY**\n*   \"Global Top 10 Countries Ranked by overall streaming volume (Total On-Demand Audio + Video): United States 1.5T\"\n*   \"Global Top 10 Songs On-Demand Audio streams: 1 Lady Gaga & Bruno Mars 'Die With A Smile' 2.858 billion\"\n*   \"U.S. Share of Total Volume, by Format & Genre: R&B/Hip-Hop 23.9% (Albums + TEA + SEA On-Demand)\"\n\n**MIDDLE**\n*   \"U.S. Top 10 Digital Song Consumption: 1 Alex Warren 'Ordinary' 6.024 million\"\n*   \"Global Top 10 Songs On-Demand Video streams: 1 CoComelon 'Wheels On The Bus' 2.016 billion\"\n*   \"U.S. Top 10 Songs On-Demand Audio streams: 1 Alex Warren 'Ordinary' 746.2 million\"\n\n**LATE**\n*   \"U.S. Top 10 CD Albums: 1 Taylor Swift The Life of a Showgirl 1,957,000\"\n*   \"U.S. Top 10 Vinyl Albums: 1 Taylor Swift The Life of a Showgirl 1,601,000\"\n*   \"U.S. Top 10 Albums Total sales: 1 Taylor Swift The Life of a Showgirl 3,985,000\""
+      ],
+      "answer": "The song ranked first globally for On-Demand Audio streams is \"Die With A Smile\" by Lady Gaga & Bruno Mars."
+    },
+    {
+      "id": "year_end_charts_02",
+      "question": "Which album had the highest total sales in the U.S. in 2025?",
+      "passed": true,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 10038.8,
+          "generation_ms": 5850.09,
+          "pipeline_ms": 15888.89,
+          "judge_api_ms": 18220.09
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 11417,
+            "output": 413,
+            "cost_usd": 0.003474
+          },
+          "generation_tokens": {
+            "input": 404,
+            "output": 38,
+            "cost_usd": 0.000216,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.00369
+        },
+        "judge_usage": {
+          "input_tokens": 4057,
+          "output_tokens": 759,
+          "total_tokens": 4816,
+          "cost_usd": 0.000666,
+          "api_calls": 9,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output fully aligns with the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response is fully relevant, directly addressing the question about the highest-selling U.S. album in 2025 with no irrelevant statements, making it accurate and on-topic.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the sentence is directly supported by the 1st node in the retrieval context, which states: 'U.S. Top 10 Albums (Total sales) #1: Taylor Swift, The Life of a Showgirl, 3,985,000 sales'.",
+          "error": null
+        }
+      },
+      "ground_truth": "'The Life of a Showgirl' by Taylor Swift had the highest total sales with 3,985,000 units sold.",
+      "retrieved_context": [
+        "Here are excerpts and data points from the YEAR-END CHARTS section:\n\n**EARLY**\n*   \"R&B/Hip-Hop\" holds a 23.9% share of total volume (Albums + TEA + SEA On-Demand) in the U.S.\n*   \"Rock\" accounts for 20.6% of total volume (Albums + TEA + SEA On-Demand) in the U.S.\n*   The United States leads the Global Top 10 Countries by overall streaming volume with 1.5T\n\n**MIDDLE**\n*   Global Top 10 Songs (On-Demand Audio streams) #1: Lady Gaga & Bruno Mars, \"Die With A Smile\", 2.858 billion\n*   U.S. Top 10 Digital Song Consumption #1: Alex Warren, \"Ordinary\", 6.024 million\n*   Global Top 10 Songs (On-Demand Video streams) #1: CoComelon, \"Wheels On The Bus\", 2.016 billion\n\n**LATE**\n*   U.S. Top 10 CD Albums #1: Taylor Swift, The Life of a Showgirl, 1,957,000 sales\n*   U.S. Top 10 Vinyl Albums #1: Taylor Swift, The Life of a Showgirl, 1,601,000 sales\n*   U.S. Top 10 Albums (Total sales) #1: Taylor Swift, The Life of a Showgirl, 3,985,000 sales"
+      ],
+      "answer": "Based on the provided context, the album with the highest total sales in the U.S. in 2025 was *The Life of a Showgirl* by Taylor Swift."
+    },
+    {
+      "id": "year_end_charts_03",
+      "question": "What song ranked first on U.S. Top Radio Songs based on audience impressions?",
+      "passed": false,
+      "execution_stats": {
+        "cached": false,
+        "latency": {
+          "retrieval_ms": 4956.63,
+          "generation_ms": 7524.39,
+          "pipeline_ms": 12481.02,
+          "judge_api_ms": 10791.25
+        },
+        "production_usage": {
+          "retrieval_tokens": {
+            "input": 11417,
+            "output": 413,
+            "cost_usd": 0.003474
+          },
+          "generation_tokens": {
+            "input": 401,
+            "output": 30,
+            "cost_usd": 0.000195,
+            "billed_this_run": true
+          },
+          "total_pipeline_cost_usd": 0.003669
+        },
+        "judge_usage": {
+          "input_tokens": 3331,
+          "output_tokens": 649,
+          "total_tokens": 3980,
+          "cost_usd": 0.000559,
+          "api_calls": 8,
+          "calls_without_usage": 0
+        }
+      },
+      "metrics": {
+        "Faithfulness": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating the actual output fully aligns with the retrieval context.",
+          "error": null
+        },
+        "Answer Relevancy": {
+          "score": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response is fully relevant, directly addressing the question about the top-ranked song on U.S. Top Radio Songs with no irrelevant statements, making it accurate and on-topic.",
+          "error": null
+        },
+        "Contextual Recall": {
+          "score": 0.0,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.00 because none of the sentences in the expected output can be attributed to any node in the retrieval context, as the claimed figure of 3.054 billion audience impressions does not match any data in the retrieval context, which only reports 2.858 billion On-Demand Audio streams under a different metric.",
+          "error": null
+        }
+      },
+      "ground_truth": "'Die With A Smile' by Lady Gaga & Bruno Mars ranked first with 3.054 billion audience impressions.",
+      "retrieved_context": [
+        "Here are excerpts and data points from the YEAR-END CHARTS section:\n\n**EARLY**\n*   \"R&B/Hip-Hop\" holds a 23.9% share of total volume (Albums + TEA + SEA On-Demand) in the U.S.\n*   \"Rock\" accounts for 20.6% of total volume (Albums + TEA + SEA On-Demand) in the U.S.\n*   The United States leads the Global Top 10 Countries by overall streaming volume with 1.5T\n\n**MIDDLE**\n*   Global Top 10 Songs (On-Demand Audio streams) #1: Lady Gaga & Bruno Mars, \"Die With A Smile\", 2.858 billion\n*   U.S. Top 10 Digital Song Consumption #1: Alex Warren, \"Ordinary\", 6.024 million\n*   Global Top 10 Songs (On-Demand Video streams) #1: CoComelon, \"Wheels On The Bus\", 2.016 billion\n\n**LATE**\n*   U.S. Top 10 CD Albums #1: Taylor Swift, The Life of a Showgirl, 1,957,000 sales\n*   U.S. Top 10 Vinyl Albums #1: Taylor Swift, The Life of a Showgirl, 1,601,000 sales\n*   U.S. Top 10 Albums (Total sales) #1: Taylor Swift, The Life of a Showgirl, 3,985,000 sales"
+      ],
+      "answer": "Based on the provided context, there is not enough information to state what song ranked first on U.S. Top Radio Songs based on audience impressions."
+    }
+  ]
+}

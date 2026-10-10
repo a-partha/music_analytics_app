@@ -2,126 +2,126 @@
   "consumption_metrics_01": {
     "correct": true,
     "answer_sha256": "0780d457ce50c80089a0bb839deeb14dd9888d3d2fd7f18d364efd8f17feae49",
-    "note": ""
+    "note": "Matches ground truth: global On-Demand Audio change was +9.6%."
   },
   "consumption_metrics_02": {
-    "correct": true,
-    "answer_sha256": "49f19e755ff22a236d22d8d5f65b4738ab32b8633e521b55163cdb3900d446c1",
-    "note": ""
+    "correct": false,
+    "answer_sha256": "75395194d692dce5f015f667194996c29592ce20ed4a7b3fbdbd07850f84e04d",
+    "note": "Retrieval failed: answer says the context lacks the ex-U.S. +11.6% figure."
   },
   "consumption_metrics_03": {
     "correct": true,
     "answer_sha256": "c34e7c860f76b35b73a23a8553d62cfa8eb748e4bd6c4d7080ed5de7562baa6a",
-    "note": ""
+    "note": "Matches ground truth: U.S. total album consumption was 1.138 billion."
   },
   "consumption_metrics_04": {
-    "correct": true,
-    "answer_sha256": "c2d839f0ae27579ae20df9945df0d20696499217f55005d11d6f6053aec32433",
-    "note": ""
+    "correct": false,
+    "answer_sha256": "7f9cc853168853fbb97f6c7c53a20199e4891915f53f6372c84198313cc375b1",
+    "note": "Retrieval failed: answer says the context lacks Canada's 3.8 million physical sales."
   },
   "vital_stats_01": {
     "correct": true,
     "answer_sha256": "baad075bafaf8290b69a162a22235417af50f47fb67ce7bc5b76fba3553c0eb2",
-    "note": ""
+    "note": "Matches ground truth: 106,000 ISRCs per day is the same figure as 106K."
   },
   "vital_stats_02": {
     "correct": true,
-    "answer_sha256": "bc4aa15a0bf584166123f5516c5b9bea777da5c9dfefb01523dc21e20577b44a",
-    "note": ""
+    "answer_sha256": "ac95c7c1990663fcd25335fa29aa4369f73e66746720a197b0739e1df1508c58",
+    "note": "Matches ground truth: 88% of tracks had 1K streams or less."
   },
   "vital_stats_03": {
-    "correct": true,
-    "answer_sha256": "7e8fe9d9576c04f24be36d6e501f13f975d62157cd9938b6dcdde3f2d97f130d",
-    "note": ""
+    "correct": false,
+    "answer_sha256": "63044057e8486f331ed120cbdd4163deeb7a0d4d02cfca6dbeeff78d994241b5",
+    "note": "Retrieval failed: answer says the context lacks the 47.9% figure for 2020s releases."
   },
   "vital_stats_04": {
     "correct": true,
-    "answer_sha256": "333201396eae6118f6fb0242adb7e874019f0af75a95c79d034ee94d3f5d0de8",
-    "note": ""
+    "answer_sha256": "4ef1b3f08aa2bf1e13e3b25d3b2e504d2ee5169b55886c279873207db073fffb",
+    "note": "Matches ground truth: U.S. vinyl sales rose for the 19th straight year."
   },
   "premium_pricing_01": {
     "correct": true,
-    "answer_sha256": "2aa058f72e9ec514ae459b8011aa1193533f08ad56e2387d239b6263325e101c",
-    "note": ""
+    "answer_sha256": "ea80e0d2240a9c10178b4c20dccfea8d75239c5ad6c082939b0c2cc3132329ba",
+    "note": "Matches ground truth: the four territories are the U.S., Mexico, Brazil, and Germany."
   },
   "premium_pricing_02": {
-    "correct": true,
-    "answer_sha256": "25cd1cd3b2101c4d3ebe3c267ba7f6cb221e062515be50cae6e8c0807abe3f08",
-    "note": ""
+    "correct": false,
+    "answer_sha256": "b40d1a4fbec0688e82af9a5c8b9c22a2d6767ec5fc4ecb359753e260b50f8c01",
+    "note": "Retrieval failed: answer says the context lacks the LATAM conversion lead."
   },
   "premium_pricing_03": {
-    "correct": true,
-    "answer_sha256": "c200e554755d5eef79f4c80ca6d2a0458e33a7bb61a2757df3ca680335a7e9b8",
-    "note": ""
+    "correct": false,
+    "answer_sha256": "885c4fd06700697697c4a7176935cf5f07d978ae0adbf1a792f6dea7a062cdb8",
+    "note": "Retrieval failed: answer says the context lacks the 42% Japanese Gen Z figure."
   },
   "premium_pricing_04": {
-    "correct": true,
-    "answer_sha256": "1686708af8098abf63dceed9547dd535128bf21289ef591afe5e9025689f21fd",
-    "note": ""
+    "correct": false,
+    "answer_sha256": "7f149bdb00d84ccd69f4d304f8baf3a42563691e6dc89c56b6facc90b0ea0144",
+    "note": "Retrieval failed: answer says the context lacks the Apple Music over-index."
   },
   "welcome_to_transmedia_01": {
     "correct": true,
-    "answer_sha256": "2f06a400689b0c58f689a1703a1b7e48cf78cc33f9b87dd78eb2e7a55e98d62f",
-    "note": ""
+    "answer_sha256": "4904a16b6962c5cab86e199e184775cda551ad58b7e98ebc15797b8c34f9d74f",
+    "note": "Matches ground truth: Becoming Led Zeppelin ranked first in minutes watched."
   },
   "welcome_to_transmedia_02": {
     "correct": true,
-    "answer_sha256": "997b5a878d6864fe055cc30d7e4f58caf075999fb2561e16f54ef5ed9996228b",
-    "note": ""
+    "answer_sha256": "6bbb2fceeaa40e55ea03a46a94d6c4f07aa4a097ca3239721953d60d1c63e493",
+    "note": "Matches ground truth: the Taylor Swift movie grossed $34M at the U.S. box office."
   },
   "welcome_to_transmedia_03": {
-    "correct": true,
-    "answer_sha256": "07b7f5f482adddfc1ebcd3983d35d43d689403e3518a2163f15c4706d9b3ce29",
-    "note": ""
+    "correct": false,
+    "answer_sha256": "84c0fa42da54883374c6db24d1537270598429a8a2aae953df994e861d347445",
+    "note": "Retrieval failed: answer says the context lacks the KPop Demon Hunters soundtrack."
   },
   "welcome_to_transmedia_04": {
-    "correct": true,
-    "answer_sha256": "7fd35f5b47eb2a68124a919b1ce32e61f5a2c8bd95cdfd6a72d12c463579cd1b",
-    "note": ""
+    "correct": false,
+    "answer_sha256": "d5326fa7cf9527540a10fba75befc967aa56ccfab417011331a9f271417549f6",
+    "note": "Retrieval failed: answer says the context lacks the 1.1 million Fortnite streams."
   },
   "evolving_fandom_01": {
     "correct": true,
-    "answer_sha256": "a115a746fc8b5b0b2e5043e044024f0ecf2c3e42e4a85e9613988161018edf05",
-    "note": ""
+    "answer_sha256": "eb2f37618224ab61ee2d87f4e863cce83aaf25cc32592cb1698ae35f61d9d730",
+    "note": "Matches ground truth: Brazil moved up on Latin music exports."
   },
   "evolving_fandom_02": {
-    "correct": true,
-    "answer_sha256": "740bd427068ca713913d02a8e73088ae0a620fdb49c9c77f7ed23c38cd03e1fe",
-    "note": ""
+    "correct": false,
+    "answer_sha256": "e2e72111b84df64cf8935b5204c4e2ab8204bf4e75deb1de10aca27b97ee4476",
+    "note": "Retrieval failed: answer says the context lacks Brazil's 75.2% local-artist share."
   },
   "evolving_fandom_03": {
     "correct": true,
-    "answer_sha256": "083c3fdbdf966c148c4d29bc63463ed0c4d2500a17aaa609a0e1750b56a73e0f",
-    "note": ""
+    "answer_sha256": "3a12992d0a24a58a9ba74e8752447533480a21af3a0a779607413c0fcb3637f9",
+    "note": "Matches ground truth: 20% of U.S. music listeners are superfans."
   },
   "ai_artists_01": {
     "correct": true,
-    "answer_sha256": "b5e2bcb94a0ac0824bc04078f65f1ae05d90ecfb292f3fa483f78a15123ae6f7",
-    "note": ""
+    "answer_sha256": "67dc587995bab0b54438c4422d4d0b1047ec56046964307f1d6c9f6da3649b3b",
+    "note": "Matches ground truth: the Xania Monet creator received a $3 million advance."
   },
   "ai_artists_02": {
     "correct": true,
-    "answer_sha256": "75217201fae99755ab3d74f18b13d79f95abba34400c34789d921559f21b77eb",
-    "note": ""
+    "answer_sha256": "b5133f02a23aa1597604b32e78732ce115a47d8fbfa0c61ffc555408c1d9e1d6",
+    "note": "Matches ground truth: Xania Monet was the only AI artist in the top 97th percentile."
   },
   "ai_artists_03": {
     "correct": false,
-    "answer_sha256": "72282bcea043a37b02e6bcb4c9f7ed7834bef08e499d4b31f5557aa7513b647b",
-    "note": "answered 43%, source says 44%"
+    "answer_sha256": "7c5da010f1582ab33424438149badbcf5eb1d9843c477c50bbf2c8ad450402bd",
+    "note": "Contradicts ground truth: answer says 29%, ground truth says 44%."
   },
   "year_end_charts_01": {
     "correct": true,
-    "answer_sha256": "98b6da36403494e084fe897e477ddf8a626a1f2741b9819d38361a224ec36b78",
-    "note": ""
+    "answer_sha256": "5de84110fe3f07277e0e95fc04a67d1364239d8959c4beb2926401e3fad5434e",
+    "note": "Matches ground truth: Die With A Smile by Lady Gaga and Bruno Mars ranked first."
   },
   "year_end_charts_02": {
     "correct": true,
-    "answer_sha256": "fd8f13498a9049c45a805197ba82c5d95abb2f4dfc747c14ba9dae3f6a51a9e7",
-    "note": ""
+    "answer_sha256": "8ef8fc4ec7a7033f2324ff11e86da262984b40f0463a3cfc739fd19264085e9f",
+    "note": "Matches ground truth: The Life of a Showgirl by Taylor Swift had the highest U.S. sales."
   },
   "year_end_charts_03": {
-    "correct": true,
-    "answer_sha256": "42c0c76b0ca625611d0e8398824a31b31dcd8da53e61d1d36b30900ec622db15",
-    "note": ""
+    "correct": false,
+    "answer_sha256": "3b0583d9986c5b5bb4683418ca5240ca012d62728ebaa88d36753ca260c80f29",
+    "note": "Retrieval failed: answer says the context lacks the top U.S. radio song."
   }
 }

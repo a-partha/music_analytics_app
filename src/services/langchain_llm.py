@@ -5,16 +5,13 @@ import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-DEFAULT_GEMINI_ANALYSIS_MODEL = "gemini-3.1-flash-lite"
-DEFAULT_GEMINI_STRATEGY_MODEL = "gemini-3.1-pro"
+from src.config.models import resolve_model
 
 def resolved_analysis_model(explicit: str | None) -> str:
-    load_dotenv()
-    return explicit or os.getenv("GEMINI_ANALYSIS_MODEL") or os.getenv("GEMINI_SYNTHESIS_MODEL") or os.getenv("GEMINI_MODEL") or DEFAULT_GEMINI_ANALYSIS_MODEL
+    return resolve_model("ANALYSIS_MODEL", explicit)
 
 def resolved_strategy_model(explicit: str | None) -> str:
-    load_dotenv()
-    return explicit or os.getenv("GEMINI_STRATEGY_MODEL") or os.getenv("GEMINI_MODEL") or DEFAULT_GEMINI_STRATEGY_MODEL
+    return resolve_model("STRATEGY_MODEL", explicit)
 
 def get_langchain_gemini_model(
     model_name: str | None = None,

@@ -12,6 +12,7 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+from src.config.models import FALLBACK_MODEL_ENV, fallback_model_is_set
 from src.config.run_profiles import RunProfile
 from src.pipelines.analysis_pipeline import run_analysis
 from src.pipelines.strategy_pipeline import run_strategy
@@ -887,6 +888,13 @@ if _previous_theme is not None and _previous_theme != _current_theme:
 st.session_state["_ui_theme_type"] = _current_theme
 _inject_styles()
 _render_hero()
+
+if not fallback_model_is_set():
+    st.error(
+        f"Service configuration is incomplete: {FALLBACK_MODEL_ENV} is not set. "
+        "Add it to .env (local) or Streamlit secrets (Cloud), then reload."
+    )
+    st.stop()
 
 _analysis_profile = RunProfile.DEV_ONE_PER_CATEGORY
 
