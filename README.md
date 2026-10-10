@@ -14,7 +14,7 @@ Every subsection is classified into a single domain focus:
 
 The application operates as a **two-tier architecture**:
 1. **Analysis layer**: Extracts grounded, verbatim excerpts and produces section-by-section verified summaries.
-2. **Strategy layer**: Synthesizes verified insights into high-level, C-suite executive briefs without drowning leadership in multi-page excerpt dumps. Verbatim citations remain accessible in the Analysis layer for backtracing.
+2. **Strategy layer**: Synthesizes verified insights into high-level, executive briefs without drowning C-suite in multi-page excerpt dumps. Verbatim citations remain accessible in the Analysis layer for backtracing.
 
 ---
 
@@ -22,12 +22,12 @@ The application operates as a **two-tier architecture**:
 
 ```mermaid
 flowchart TB
-    subgraph IngestionPipeline ["0. Ingestion (Pre-Graph)"]
+    subgraph IngestionPipeline ["0. Ingestion (Pre-Graphs)"]
         A(["Upload PDF"]) --> B["Vision Split: PyMuPDF + Gemini Vision"]
         B --> C[("Gemini File Search Index")]
     end
 
-    subgraph AnalysisGraph ["1. Analysis LangGraph (ReAct Loop)"]
+    subgraph AnalysisGraph ["1. Analysis Graph (ReAct + Structured Agents)"]
         D["List Pending Subsections"]
         D --> E["Fetch & Summarize Subsection"]
         E --> F["Judge & Validate fit (DTC / IP)"]
@@ -36,17 +36,17 @@ flowchart TB
         G -->|Yes| H["Assemble Accepted Insights & UI Display"]
     end
 
-    subgraph StrategyGraph ["2. Strategy LangGraph (Executive Brief)"]
-        I(["User clicks: Generate Executive Brief"]) --> J["Build Strategy Bundle (DTC/IP Insights)"]
+    subgraph StrategyGraph ["2. Strategy Graph (Executive Brief)"]
+        I["User clicks: Generate Executive Brief"] --> J["Build Strategy Bundle (DTC/IP Insights)"]
         J --> K["Generate Strategic Recommendations"]
         K --> L["Parse Markdown & Deduplicate"]
-        L --> M{"Grounded check passes?"}
+        L --> M{"Check passes?"}
         M -->|No: retry once| K
         M -->|Yes| N["Executive Recommendation Cards Display"]
     end
 
     C -->|"Store name & Manifest"| D
-    H -.->|"Provides verified insights"| I
+    H -->|"Provides verified insights"| I
 ```
 
 | Phase | Container | What happens |
