@@ -379,7 +379,7 @@ Implemented in `app/streamlit_app.py`.
 
 
 
-### Entry points
+### Entry Points
 
 - **Production:** [https://music-agentic-analytics.streamlit.app/](https://music-agentic-analytics.streamlit.app/)
 - **Local:** `python scripts/run.py` or `streamlit run app/streamlit_app.py`
@@ -393,7 +393,7 @@ Implemented in `app/streamlit_app.py`.
 
 ## Evaluation
 
-`src/validation/evals/run_evals.py` asks 25 questions about the indexed *Luminate 2025 Year-End Music Report* and scores the answers. It evaluates the File Search index the app builds. It does not run the ReAct agent, the DTC/IP judge, or the executive brief.
+Scripted offline component-level RAG evaluation tests the factual retrieval quality of the Gemini File Search store against benchmark questions before runtime agents interact with it.
 
 ```mermaid
 flowchart LR
@@ -402,11 +402,11 @@ flowchart LR
   eval -->|"Answer + Context"| judge["NVIDIA NIM (Nemotron 120B)"]
 ```
 
+- `src/validation/evals/static_qa.json`: Contains *Goldens*, which are a fixed, pre-made list of 25 hand-curated questions written by Gemini and grounded in the *Luminate 2025 Year-End Music Report*. DeepEval loads these *Goldens* to construct its *Evaluation Dataset*.
+- `src/validation/evals/run_evals.py`: The evaluation script for Single-Turn interactions, testing simple one-question and one-answer exchanges. It packages each interaction into a *Test Case* container using `LLMTestCase` and scores it with the `evaluate()` function. It evaluates the File Search index built during ingestion, without running the ReAct agent, DTC and IP judges, or the executive brief graph.
+- `src/validation/evals/testing_report.json`: The benchmark report recording how the AI system performed against the *Evaluation Dataset* at a specific point in time.
 
-
-
-
-### Models, limits, and labels
+### Models, Limits, and Labels
 
 
 | Piece                | Setting                                                                                                     |
@@ -424,7 +424,7 @@ flowchart LR
 
 ### Testing Report Summary
 
-Source: `src/validation/evals/testing_report.json`, a section-locked run on 2026-10-09 (UTC). Models: retrieval `gemini-3.1-flash-lite`, answers `gemini-3.5-flash-lite`, judge `nvidia/nemotron-3-super-120b-a12b`.
+Source: `src/validation/evals/testing_report.json`, a section-locked run. Models: retrieval `gemini-3.1-flash-lite`, answers `gemini-3.5-flash-lite`, judge `nvidia/nemotron-3-super-120b-a12b`.
 
 
 | Metric                        | Result                                                      |
@@ -438,8 +438,8 @@ Source: `src/validation/evals/testing_report.json`, a section-locked run on 2026
 
 - **Contextual Recall (56%)** is limited by the 9-bullet excerpt. Scores in this run were all-or-nothing: for 11 of the 25 questions, the excerpt contained none of the reference answer's facts (score 0).
 - **Answer Relevancy (80%)**: all 5 failures are among those 11 questions. The generator replied that the context had no such information, and the judge scored that reply as irrelevant.
-- **Faithfulness (100%)**: every answer scored 1.0, staying within the retrieved text, refusals included.
-- **Bottleneck:** every failure in this run traces back to retrieval coverage, not to answer generation.
+- **Faithfulness (100%)**: every answer scored 1.0, staying within the retrieved text including refusals.
+- **Bottleneck:** every failure in this run traces back to retrieval coverage and not to answer generation.
 
 
 
