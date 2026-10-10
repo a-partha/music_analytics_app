@@ -36,8 +36,8 @@ flowchart TB
         G -->|Yes| H["Assemble Accepted Insights & UI Display"]
     end
 
-    subgraph StrategyGraph ["2. Strategy Graph (Executive Brief)"]
-        I(["User clicks: Generate Executive Brief"]) --> J["Build Strategy Bundle (DTC/IP Insights)"]
+    subgraph StrategyGraph I(["2. Strategy Graph (Executive Brief)"])
+        (["User clicks: Generate Executive Brief"]) --> J["Build Strategy Bundle (DTC/IP Insights)"]
         J --> K["Generate Strategic Recommendations"]
         K --> L["Parse Markdown & Deduplicate"]
         L --> M{"Check passes?"}
@@ -46,7 +46,7 @@ flowchart TB
     end
 
     C -->|"Store name & Manifest"| D
-    H -.->|"Provides verified insights"| I
+    H -->|"Provides verified insights"| I
 ```
 
 | Phase | Container | What happens |
